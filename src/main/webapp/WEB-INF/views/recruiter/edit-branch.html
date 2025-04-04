@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Admin-Manage Account</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/manager/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/manager/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/manager/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/manager/css/style.css" rel="stylesheet">
+
+    <!-- Load the Google Maps API -->
+    <script async defer
+        th:src="'https://maps.gomaps.pro/maps/api/js?key=' + ${MAPS_API_KEY} + '&libraries=places&callback=initMap'"></script>
+</head>
+
+<body>
+    <div class="container-fluid position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div th:replace="~{layout/spinner-recruiter :: spinner-recruiter}"></div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div th:replace="~{layout/sidebar-recruiter:: sidebar-recruiter}"></div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <div th:replace="~{layout/navbar-recruiter :: navbar-recruiter}"></div>
+            <!-- Navbar End -->
+
+
+            <!-- Mở đầu phần chính -->
+            <div class="container-fluid pt-4 px-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/recruiter/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/recruiter/manage-branch}">Quản lí chi nhánh</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Sửa chi nhánh</li>
+                    </ol>
+                </nav>
+                <!-- Viết code vào đây -->
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Sửa chi nhánh</h6>
+                    <div class="table">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!--form to add new branch-->
+                                <form th:action="@{/recruiter/manage-branch/edit}" method="post"
+                                    onsubmit="return validateAddress();" th:object="${updateBranch}">
+                                    <div class="bg-light rounded h-100 p-4">
+                                        <input type="hidden" th:field="*{id}">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="province">Tỉnh</label>
+                                            <select id="province" class="form-control" th:field="*{province}"
+                                                th:attr="data-selected=${updateBranch.province.code}"
+                                                onchange="loadDistricts(this.value); updateAddress();" required>
+                                                <option value="">Chọn tỉnh</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="district">Huyện</label>
+                                            <select id="district" class="form-control" th:field="*{district}"
+                                                th:attr="data-selected=${updateBranch.district!= null ? updateBranch.district.code : ''}"
+                                                onchange="loadWards(this.value); updateAddress();">
+                                                <option value="">Chọn huyện</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="ward">Xã</label>
+                                            <select id="ward" class="form-control" th:field="*{ward}"
+                                                th:attr="data-selected=${updateBranch.ward != null ? updateBranch.ward.code : ''}"
+                                                onchange="updateAddress();">
+                                                <option value="">Chọn xã</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="address">Địa chỉ</label>
+                                            <input type="text" id="address" class="form-control" th:field="*{address}"
+                                                readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="autocomplete">Tên đường, số nhà</label>
+                                            <input type="text" id="autocomplete" class="form-control" name="detail"
+                                                placeholder="Nhập địa chỉ tìm kiếm..." required>
+                                            <span id="address-error" class="text-danger" style="display: none;">Địa chỉ
+                                                không nằm trong tỉnh/thành phố đã chọn</span>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Lưu</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="map" style="height: 450px;"></div>
+                                <p id="addressText" style="display: none;">Chọn vị trí trên bản đồ để lấy địa chỉ...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Kết thúc phần chính -->
+
+                <!-- Footer Start -->
+                <div th:replace="~{layout/footer-recruiter :: footer-recruiter}"></div>
+                <!-- Footer End -->
+            </div>
+            <!-- Content End -->
+
+
+            <!-- Back to Top -->
+            <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        </div>
+
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Template Javascript -->
+        <script src="/manager/js/main.js"></script>
+        <script src="/manager/js/edit-branch.js"></script>
+        <!--Script for modal-->
+</body>
+
+</html>

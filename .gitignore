@@ -1,0 +1,21 @@
+# Ignore the .vscode folder
+.vscode/
+
+# Ignore the logs folder
+logs/
+*.log
+spring-boot-application.log
+
+.settings/
+
+# Ignore the application.properties file
+application.properties
+
+# Ignore the target folder
+target/
+
+# Ignore the .classpath file
+.dockerignore
+Dockerfile
+docker/
+docker-compose.yml

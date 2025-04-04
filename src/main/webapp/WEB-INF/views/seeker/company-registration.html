@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Đăng ký làm nhà tuyển dụng</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/user/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="/user/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/user/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/user/css/style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Toastr library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+        integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Navbar Start -->
+        <div th:replace="~{layout/navbar-seeker :: navbar}"></div>
+        <!-- Navbar End -->
+
+        <!-- Header End -->
+        <div class="container-xxl py-5 bg-dark page-header">
+            <div class="container my-5 pt-5 pb-4">
+                <h1 class="display-3 text-white mb-3 animated slideInDown">Trở thành nhà tuyển dụng</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb text-uppercase">
+                        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Đăng ký làm nhà tuyển dụng
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <!-- Header End -->
+        <div class="container-xxl py-5">
+            <div class="container">
+                <!-- Nav Tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="userinformation-tab" data-bs-toggle="tab"
+                            data-bs-target="#userinformation" type="button" role="tab">Thông tin người dùng</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="companyinformation-tab" data-bs-toggle="tab"
+                            data-bs-target="#companyinformation" type="button" role="tab">Thông tin công ty</button>
+                    </li>
+                </ul>
+                <form id="userForm" method="post" th:action="@{/company-registration}" th:object="${pendingUser}"
+                    enctype="multipart/form-data" onsubmit="return validateForm()" novalidate>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content mt-2" id="myTabContent">
+                        <div class="tab-pane fade show active" id="userinformation" role="tabpanel">
+                            <!-- Cột bên phải: Thông tin sửa đổi -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="mb-4"
+                                    style="font-family: 'Inter', sans-serif; font-weight: 800; color: #333;">
+                                    Thông tin nhà tuyển dụng
+                                </h2>
+                            </div>
+                            <div class="row g-3">
+                                <!-- Tên đăng nhập -->
+                                <div class="col-12 col-sm-6">
+                                    <label for="username" class="form-label">Tên đăng nhập<span
+                                            style="color: red;">*</span></label>
+                                    <input type="text" class="form-control" id="username" placeholder="Tên đăng nhập"
+                                        th:field="*{username}" required>
+                                    <small class="form-text text-muted">Tên đăng nhập sẽ được dùng để đăng
+                                        nhập với tư cách nhà tuyển dụng</small>
+                                    <!-- ✅ Fix: Ensure error message is displayed -->
+                                    <div th:if="${#fields.hasErrors('username')}" style="color: red;">
+                                        <span th:errors="*{username}"></span> <!-- Display the error message -->
+                                    </div>
+                                </div>
+
+                                <!-- Mật khẩu -->
+                                <div class="col-12 col-sm-6">
+                                    <label for="password" class="form-label">Mật khẩu<span
+                                            style="color: red;">*</span></label>
+                                    <input type="password" class="form-control" id="password"
+                                        placeholder="Nhập mật khẩu" th:field="*{password}" required>
+                                    <div th:if="${#fields.hasErrors('password')}" style="color: red;">
+                                        <span th:errors="*{password}"></span> <!-- Display the error message -->
+                                    </div>
+
+                                </div>
+
+                                <!-- Họ tên -->
+                                <div class="col-12 col-sm-6">
+                                    <label for="fullName" class="form-label">Họ tên</label>
+                                    <input type="text" class="form-control" id="fullName" th:field="*{fullName}"
+                                        placeholder="Nhập họ tên">
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-12 col-sm-6">
+                                    <label for="email" class="form-label">Email<span
+                                            style="color: red;">*</span></label>
+                                    <input type="email" class="form-control" id="email" placeholder="Nhập email"
+                                        th:field="*{email}" required>
+                                    <div th:if="${#fields.hasErrors('email')}" style="color: red;">
+                                        <span th:errors="*{email}"></span> <!-- Display the error message -->
+                                    </div>
+
+                                </div>
+                                <!-- Số điện thoại -->
+                                <div class="col-12 col-sm-6">
+                                    <label for="phone" class="form-label">Số điện thoại<span
+                                            style="color: red;">*</span></label>
+                                    <input type="tel" class="form-control" id="phone" placeholder="Nhập số điện thoại"
+                                        th:field="*{phone}" required>
+                                    <!-- ✅ Fix: Ensure error message is displayed -->
+                                    <div th:if="${#fields.hasErrors('phone')}" style="color: red;">
+                                        <span th:errors="*{phone}"></span> <!-- Display the error message -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Nút Tiếp Theo -->
+                            <div class="col-12 d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-primary"
+                                    onclick="switchTab('companyinformation-tab')"
+                                    style="border-radius: 15px; border: 1px solid; padding: 10px 25px;">
+                                    Tiếp theo
+                                </button>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="companyinformation" role="tabpanel">
+                            <!-- Cột bên phải: Thông tin sửa đổi -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="mb-4"
+                                    style="font-family: 'Inter', sans-serif; font-weight: 800; color: #333;">
+                                    Thông tin công ty
+                                </h2>
+                            </div>
+
+
+                            <div class="row g-3">
+                                <div class="row g-3">
+                                    <div class="col-12 col-sm-4 text-center">
+                                        <p class="form-label">Logo công ty</p>
+
+                                        <!-- Hidden file input -->
+                                        <input class="form-control" type="file" id="imageFile1" name="imageFile1"
+                                            accept=".png, .jpg, .jpeg, .webp" style="display: none;" />
+
+                                        <!-- Image preview -->
+                                        <div class="col-12">
+                                            <img id="imagePreview1" src="/user/resume-asset/headshot.jpg"
+                                                alt="Click để chọn ảnh đại diện"
+                                                style="max-height: 250px; max-width: 100%; cursor: pointer; border-radius: 15px; border: 2px dashed #ddd;"
+                                                onclick="document.getElementById('imageFile1').click();" />
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-12 col-sm-8">
+
+                                        <div class="row">
+                                            <!-- Tên công ty -->
+                                            <div class="mb-3 col-md-6">
+                                                <input type="hidden" th:field="*{id}" />
+                                                <label for="companyName" class="form-label">Tên công ty<span
+                                                        style="color: red;">*</span></label>
+                                                <input type="text" class="form-control" id="companyName"
+                                                    placeholder="Nhập tên công ty" th:field="*{workingCompany.name}"
+                                                    required>
+                                            </div>
+
+                                            <!-- Loại hình công ty (Dropdown) -->
+                                            <div class="mb-3 col-md-6">
+                                                <label for="companyType" class="form-label">Loại hình công ty<span
+                                                        style="color: red;">*</span></label>
+                                                <select class="form-select" id="companyType"
+                                                    th:field="*{workingCompany.type}" required>
+                                                    <option value="" disabled selected>Chọn loại hình</option>
+                                                    <option value="IT Outsourcing">IT Outsourcing</option>
+                                                    <option value="IT Product">IT Product</option>
+                                                    <option value="IT Service and IT Consulting">IT Service and IT
+                                                        Consulting
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <!-- Lĩnh vực  -->
+                                            <div class="mb-3 col-md-6">
+                                                <label for="companyIndustry" class="form-label">Lĩnh vực<span
+                                                        style="color: red;">*</span></label>
+                                                <input type="text" class="form-control" id="companyIndustry"
+                                                    placeholder="Nhập lĩnh vực" th:field="*{workingCompany.industry}"
+                                                    required>
+                                            </div>
+
+                                            <!-- Quốc gia -->
+                                            <div class="mb-3 col-md-6">
+                                                <label for="companyCountry" class="form-label">Quốc gia</label>
+                                                <input type="text" class="form-control" id="companyCountry"
+                                                    th:field="*{workingCompany.country}" placeholder="Nhập quốc gia">
+                                            </div>
+
+                                            <!-- Website -->
+                                            <div class="mb-3 col-12">
+                                                <label for="website" class="form-label">Website<span
+                                                        style="color: red;">*</span></label>
+                                                <input type="text" class="form-control" id="website"
+                                                    placeholder="Nhập website công ty"
+                                                    th:field="*{workingCompany.website}" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"></div> -->
+                                        <div class="mb-3 col-12">
+                                            <input type="checkbox" id="agreeTerms" onclick="toggleSubmitButton()">
+                                            <label for="agreeTerms">Tôi đã đọc và đồng ý với các quy định, chính sách
+                                                của Job Seeker</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!-- Nút Quay Lại và Nút Submit -->
+                            <div class="col-12 d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="switchTab('userinformation-tab')"
+                                    style="border-radius: 15px; border: 1px solid; padding: 10px 25px;">Quay
+                                    lại</button>
+                                <button id="submitButton"
+                                    style="border-radius: 15px; border: 1px solid; padding: 10px 25px;"
+                                    class="btn btn-primary" type="submit" disabled>Cập nhật</button>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- Bootstrap Modal -->
+            <div class="modal fade" id="requestModal" tabindex="-1" aria-labelledby="requestModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="requestModalLabel">Thông báo</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p>Yêu cầu của bạn đã được gửi thành công! Chúng tôi sẽ kiểm duyệt sớm nhất.<br>
+                                Hãy kiểm tra email thường xuyên để nhận thông báo mới nhất về yêu cầu tuyển dụng nhé.
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-primary" href="/">Về trang chủ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+
+        <!-- JavaScript để tự động hiển thị modal nếu sentRequest = true -->
+        <script th:if="${sentRequest}">
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('requestModal'));
+                myModal.show();
+            });
+        </script>
+
+        <script>
+            function switchTab(tabId) {
+                var tab = new bootstrap.Tab(document.getElementById(tabId));
+                tab.show();
+            }
+            function toggleSubmitButton() {
+                var checkbox = document.getElementById("agreeTerms");
+                var submitButton = document.getElementById("submitButton");
+                submitButton.disabled = !checkbox.checked;
+            }
+
+            function validateForm() {
+                var requiredFields = [
+                    { id: "username", name: "Tên đăng nhập" },
+                    { id: "password", name: "Mật khẩu" },
+                    { id: "email", name: "Email" },
+                    { id: "phone", name: "Số điện thoại" },
+                    { id: "companyName", name: "Tên công ty" },
+                    { id: "companyType", name: "Loại hình công ty" },
+                    { id: "companyIndustry", name: "Lĩnh vực" },
+                    { id: "website", name: "Website" },
+                ];
+
+                for (let i = 0; i < requiredFields.length; i++) {
+                    let field = requiredFields[i];
+                    let input = document.getElementById(field.id);
+                    if (input && input.value.trim() === "") {
+                        toastr.error(field.name + " không được để trống", "Lỗi");
+                        input.focus();
+                        return false;
+                    }
+                }
+                return true;
+            }
+        </script>
+        <!-- Footer Start -->
+        <div th:replace="~{layout/footer-seeker :: footer}"></div>
+        <!-- Footer End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/user/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+        integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Template Javascript -->
+    <script src="/user/js/main.js"></script>
+</body>
+
+</html>

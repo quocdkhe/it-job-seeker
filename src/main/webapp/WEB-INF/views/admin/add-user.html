@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Admin-Add user</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/manager/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/manager/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Toastr library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+        integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Template Stylesheet -->
+    <link href="/manager/css/style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            const avatarFile = $("#avatarFile");
+            avatarFile.change(function (e) {
+                const imgURL = URL.createObjectURL(e.target.files[0]);
+                $("#avatarPreview").attr("src", imgURL);
+                $("#avatarPreview").css({ "display": "block" });
+            });
+        });
+        function DisableCompanyField() {
+            var roleSelect = document.getElementById("exampleInputRole");
+            var companySelect = document.getElementById("exampleInputCompany");
+    
+            var selectedRole = roleSelect.value;
+            if (selectedRole == "1" || selectedRole == "2") {
+                companySelect.disabled = true;
+            } else {
+                companySelect.disabled = false;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div th:replace="~{layout/spinner-recruiter :: spinner-recruiter}"></div>
+        <!-- Spinner End -->
+
+        <!-- Sidebar Start -->
+        <div th:replace="~{layout/sidebar-admin :: sidebar-admin}"></div>
+        <!-- Sidebar End -->
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <div th:replace="~{layout/navbar-recruiter :: navbar-recruiter}"></div>
+            <!-- Navbar End -->
+
+            <!-- Main Content Start -->
+            <div class="container-fluid pt-4 px-4">
+                <!-- Viết code vào đây -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/account">Tài khoản</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Thêm tài khoản</li>
+                    </ol>
+                </nav>
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4"></h6>
+                    <form th:action="@{/admin/account/add-user}" method="post" enctype="multipart/form-data"
+                        th:object="${user}">
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label for="exampleInputEmail1" class="form-label">Địa chỉ Email</label>
+                                <input type="email" class="form-control" id="exampleInputEmail1" th:field="*{email}"
+                                    required>
+                                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="exampleInputFullName" class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" id="exampleInputFullName" th:field="*{fullName}"
+                                    required>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="exampleInputUsername" class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control" id="exampleInputUsername" th:field="*{username}"
+                                    required>
+                                <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                                    style="color: red;">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="exampleInputPassword1" class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control" id="exampleInputPassword1"
+                                    th:field="*{password}" required>
+                                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                                    style="color: red;"></div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="exampleInputBirthDate" class="form-label">Ngày sinh</label>
+                                <input type="date" class="form-control" id="exampleInputBirthDate"
+                                    th:field="*{birthDate}" required>
+                                <div th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"
+                                    style="color: red;">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="exampleInputPhone" class="form-label">Số điện thoại</label>
+                                <input type="number" class="form-control" id="exampleInputPhonePhone"
+                                    th:field="*{phone}" required>
+                                <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" style="color: red;">
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="exampleInputCompany" class="form-label">Công ty</label>
+                                <select class="form-select" id="exampleInputCompany" th:field="*{workingCompany}">
+                                    <option value="" disable selected>Chọn công ty...</option>
+                                    <option th:each="company : ${companies}" th:value="${company.id}"
+                                        th:text="${company.name}"></option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="exampleInputAddress" class="form-label">Địa chỉ thường trú</label>
+                                <input type="text" class="form-control" id="exampleInpuAddress" th:field="*{address}">
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label for="exampleInputRole" class="form-label">Vai trò</label>
+                                <select class="form-select" id="exampleInputRole" th:field="*{role}" name="role" onchange="DisableCompanyField()">
+                                    <option value="" disable selected>Chọn...</option>
+                                    <option value="" th:each="role : ${roles}" th:value="${role.id}">
+                                        <span th:switch="${role.id}">
+                                            <span th:case="1">Quản trị viên</span>
+                                            <span th:case="2">Người tìm việc</span>
+                                            <span th:case="3">Nhà tuyển dụng</span>
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Giới tính</label>
+                                <div>
+                                    <input type="radio" id="male" name="gender" value="true" th:field="*{gender}">
+                                    <label for="male">Nam</label>
+                                    <input type="radio" id="female" name="gender" value="false" th:field="*{gender}">
+                                    <label for="female">Nữ</label>
+                                </div>
+                            </div>
+                            <!--upload image-->
+                            <div class="mb-3 col-md-6">
+                                <label for="avatarFile" class="form-label">Ảnh đại diện:</label>
+                                <input class="form-control" type="file" id="avatarFile" accept=".png, .jpg, .jpeg"
+                                    name="imageFile" />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <img style="max-height: 250px; display: none;" alt="avatar preview"
+                                    id="avatarPreview" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Thêm</button>
+                        <button type="reset" class="btn btn-secondary">Đặt lại</button>
+                    </form>
+                </div>
+            </div>
+            <!-- Main Content End -->
+
+            <!-- Footer Start -->
+            <div th:replace="~{layout/footer-recruiter :: footer-recruiter}"></div>
+            <!-- Footer End -->
+        </div>
+    </div>
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+        integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Template Javascript -->
+    <script src="/manager/js/main.js"></script>
+</body>
+
+</html>

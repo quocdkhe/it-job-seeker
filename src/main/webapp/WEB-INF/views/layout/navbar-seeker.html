@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+</head>
+
+<body>
+
+    <!-- Navbar Start -->
+    <nav style="z-index: 1030;" class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0"
+        th:fragment="navbar">
+        <a href="/" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
+            <h1 class="m-0 text-primary">JobEntry</h1>
+        </a>
+        <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto p-4 p-lg-0">
+                <a href="/" class="nav-item nav-link">Trang chủ</a>
+                <a href="/jobs" class="nav-item nav-link">Việc làm IT</a>
+                <a href="/companies" class="nav-item nav-link">Công ty IT</a>
+                <a href="/company-registration" class="nav-item nav-link ">Nhà tuyển dụng</a>
+                <a sec:authorize="hasRole('ROLE_Seeker')" href="/feedback" class="nav-item nav-link ">Góp ý</a>
+            </div>
+            <div class="navbar-nav align-items-center ms-auto">
+                <div sec:authorize="isAnonymous()">
+                    <a id="not-signed-in" href="/login" class="nav-link">Đăng nhập</a>
+                </div>
+                <div sec:authorize="isAuthenticated()" class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+
+                        <img th:if="${session.provider == 'LOCAL'}" class="rounded-circle me-lg-2"
+                            th:src="${session.avatar != null ? '/avatar/' + session.avatar : '/avatar/avatar-trang-4.jpg'}"
+                            alt="" style="width: 40px; height: 40px;">
+
+                        <img th:if="${session.provider != 'LOCAL'}" class="rounded-circle me-lg-2"
+                            th:src="${session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg'}" alt=""
+                            style="width: 40px; height: 40px;">
+
+                        <span class="d-none d-lg-inline-flex" th:text="${session.fullName}"></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                        <div sec:authorize="hasRole('ROLE_Admin')">
+                            <a href="/admin/edit-admin" class="dropdown-item">Tài khoản của tôi</a>
+                            <a href="/admin/account" class="dropdown-item">Trang quản lý</a>
+                        </div>
+
+                        <div sec:authorize="hasRole('ROLE_Recruiter')">
+                            <a href="/recruiter/edit-recruiter" class="dropdown-item">Tài khoản của tôi</a>
+                            <a href="/recruiter/manage-branch" class="dropdown-item">Trang quản lý</a>
+                        </div>
+                        <div sec:authorize="hasRole('ROLE_Seeker')">
+                            <a href="/seeker/edit-info" class="dropdown-item">Tài khoản của tôi</a>
+                            <a href="/resume" class="dropdown-item">Hồ sơ đính kèm</a>
+                            <a href="/follow/companies" class="dropdown-item">Đã theo dõi</a>
+                            <a href="/cv-status" class="dropdown-item">Trạng thái CV</a>
+                        </div>
+
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="dropdown-item">Đăng xuất</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+</body>
+
+</html>

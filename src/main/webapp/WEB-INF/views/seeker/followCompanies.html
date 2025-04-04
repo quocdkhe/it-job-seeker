@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Follow-company</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta sec:authorize="isAuthenticated()" name="_csrf" th:content="${_csrf.token}" />
+    <meta sec:authorize="isAuthenticated()" name="_csrf_header" th:content="${_csrf.headerName}" />
+
+
+    <!-- Favicon -->
+    <link href="/user/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/user/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/user/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/user/css/style.css" rel="stylesheet">
+    <!-- Toastr library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+        integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Lightbox stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css">
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Navbar Start -->
+        <div th:replace="~{layout/navbar-seeker :: navbar}"></div>
+        <!-- Navbar End -->
+
+
+        <!-- Header End -->
+        <div class="container-xxl py-5 bg-dark page-header mb-5">
+            <div class="container my-5 pt-5 pb-4">
+                <h1 class="display-3 text-white mb-3 animated slideInDown">Theo dõi</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb text-uppercase">
+                        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Công ty đã theo dõi</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <!-- Header End -->
+
+
+        <div class="container-xxl py-5">
+            <div class="container">
+                <h1 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Danh sách theo dõi</h1>
+                <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.3s">
+                    <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
+                        <li class="nav-item">
+                            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active"
+                                href="/follow/companies">
+                                <h6 class="mt-n1 mb-0">Công ty</h6>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="d-flex align-items-center text-start mx-3 pb-3" href="/follow/jobs">
+                                <h6 class="mt-n1 mb-0">Việc làm</h6>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane fade show p-0 active">
+                            <div th:each="followCompany : ${followedCompanies}">
+                                <div class="job-item p-4 mb-4">
+                                    <div class="row g-4">
+                                        <div class="col-sm-12 col-md-8 d-flex align-items-center">
+                                            <div class="image-container">
+                                                <img th:src="@{/company-logo/{pic}(pic=${followCompany.logo})}" alt="">
+                                            </div>
+
+                                            <div class="text-start ps-4">
+                                                <h5 class="mb-3" th:text="${followCompany.name}"></h5>
+                                                <span class="text-truncate me-3"><i
+                                                        class="fa fa-map-marker-alt text-primary me-2"></i>
+                                                    <span th:text="${followCompany.country}"></span></span>
+                                                <span class="text-truncate me-3"><i
+                                                        class="far fa-clock text-primary me-2"></i>
+                                                    <span th:text="${followCompany.otPolicy}"></span></span>
+                                                <span class="text-truncate me-0"><i
+                                                        class="far fa-user text-primary me-2"></i>
+                                                    <span th:text="${followCompany.size}"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
+                                            <div class="d-flex mb-3">
+                                                <a class="btn btn-light me-2" id="toggle-unfollow-company"
+                                                    th:attr="data-company-id=${followCompany.id}, data-user-id=${session.userId}">
+                                                    <i class="fa fa-times me-2"></i>Hủy theo dõi
+                                                </a>
+
+                                                <a class="btn btn-primary"
+                                                    th:href="@{/companies/{id}(id=${followCompany.id})}">Xem chi
+                                                    tiết</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Footer Start -->
+        <div th:replace="~{layout/footer-seeker :: footer}"></div>
+        <!-- Footer End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+        integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/user/js/main.js"></script>
+
+    <script>
+        $(document).on('click', '#toggle-unfollow-company', function () {
+            if ($('#not-signed-in').length > 0) {
+                toastr.warning("Bạn cần đăng nhập để thực hiện thao tác này", "Lỗi thao tác");
+                return;
+            }
+
+            var button = $(this);
+            var companyId = button.data('company-id');
+            var url = `/seeker/api/unfollow-company/${companyId}`;
+            var successMessage = "Hủy theo dõi thành công";
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                beforeSend: function (xhr) {
+                    var token = $("meta[name='_csrf']").attr("content");
+                    var header = $("meta[name='_csrf_header']").attr("content");
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (response) {
+                    toastr.success(successMessage, "Thành công");
+                    button.closest('.job-item').fadeOut(300, function () {
+                        $(this).remove();
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi từ server:", xhr.responseText);
+                    toastr.error("Có lỗi xảy ra. Vui lòng thử lại!", "Lỗi");
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

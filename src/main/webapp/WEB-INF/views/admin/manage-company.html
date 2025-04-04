@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <title>Admin-Manage Company</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Favicon -->
+  <link href="img/favicon.ico" rel="icon">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icon Font Stylesheet -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Libraries Stylesheet -->
+  <link href="/manager/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="/manager/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Template Stylesheet -->
+  <link href="/manager/css/style.css" rel="stylesheet">
+  <!-- Toastr library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+    integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+  <div class="container-fluid position-relative bg-white d-flex p-0">
+    <!-- Spinner Start -->
+    <div th:replace="~{layout/spinner-recruiter :: spinner-recruiter}"></div>
+    <!-- Spinner End -->
+
+
+    <!-- Sidebar Start -->
+    <div th:replace="~{layout/sidebar-admin :: sidebar-admin}"></div>
+    <!-- Sidebar End -->
+
+    <!-- Content Start -->
+    <div class="content">
+      <!-- Navbar Start -->
+      <div th:replace="~{layout/navbar-recruiter :: navbar-recruiter}"></div>
+      <!-- Navbar End -->
+
+
+      <!-- Mở đầu phần chính -->
+      <div class="container-fluid pt-4 px-4">
+        <!-- Viết code vào đây -->
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Công ty</li>
+          </ol>
+        </nav>
+
+        <div class="bg-light rounded h-100 p-4">
+          <h6 class="mb-4">Danh sách công ty</h6>
+            <div class="table-responsive">
+            <table class="table">
+              <thead>
+              <tr>
+                <th scope="col">Mã số</th>
+                <th scope="col">Tên công ty</th>
+                <th scope="col">Loại hình</th>
+                <th scope="col">Quốc gia</th>
+                <th scope="col">Quy mô</th>
+                <th scope="col">Tình trạng</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="company : ${companies}">
+                <td th:text="${company.id}"></td>
+                <td th:text="${company.name}"></td>
+                <td th:text="${company.type}"></td>
+                <td th:text="${company.country}"></td>
+                <td th:text="${company.size}"></td>
+
+                <td th:text="${company.isApproved ? 'Đang hoạt động' : 'Chờ chấp thuận'}"
+                th:style="${company.isApproved ? 'color: green;' : 'color: red;'}"></td>
+                <td>
+                <a th:href="@{/admin/manage-company/activate/{id}(id=${company.id})}"
+                  th:if="${company.isApproved != true}" class="btn btn-sm btn-primary">Chấp thuận</a>
+                <a th:href="@{/admin/manage-company/delete/{id}(id=${company.id})}"
+                  th:if="${company.isApproved != true}" class="btn btn-sm btn-primary">Xóa</a>
+
+                <a th:href="@{/companies/{id}(id=${company.id})}"
+                  class="btn btn-sm btn-warning">Chi
+                  tiết</a>
+                <a th:href="@{/admin/manage-company/edit-company/{id}(id=${company.id})}"
+                  class="btn btn-sm btn-info">Chỉnh sửa</a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <!-- Pagination -->
+            <nav>
+              <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                  <a class="page-link" th:href="@{/admin/account(page=${currentPage-1})}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                  th:classappend="${currentPage == i} ? 'active'">
+                  <a class="page-link" th:href="@{/admin/manage-company(page=${i})}" th:text="${i}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                  <a class="page-link" th:href="@{/admin/manage-company(page=${currentPage+1})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            <!-- End Pagination -->
+            <div colspan="6">
+              <a th:href="@{/admin/manage-company/add-company}" class="btn btn-sm btn-success">Thêm công ty mới</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Kết thúc phần chính -->
+
+
+      <!-- Footer Start -->
+      <div th:replace="~{layout/footer-recruiter :: footer-recruiter}"></div>
+      <!-- Footer End -->
+    </div>
+    <!-- Content End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+  </div>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+    integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Template Javascript -->
+  <script src="/manager/js/main.js"></script>
+</body>
+
+</html>

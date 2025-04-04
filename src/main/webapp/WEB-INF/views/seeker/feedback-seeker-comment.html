@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>JobEntry - Job Portal Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta sec:authorize="isAuthenticated()" name="_csrf" th:content="${_csrf.token}" />
+    <meta sec:authorize="isAuthenticated()" name="_csrf_header" th:content="${_csrf.headerName}" />
+
+
+    <!-- Favicon -->
+    <link href="/user/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/user/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/user/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/user/css/style.css" rel="stylesheet">
+    <!-- Toastr library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+        integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Lightbox stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css">
+
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Navbar Start -->
+        <div th:replace="~{layout/navbar-seeker :: navbar}"></div>
+        <!-- Navbar End -->
+
+
+        <!-- Header End -->
+        <div class="container-xxl py-5 bg-dark page-header ">
+            <div class="container my-5 pt-5 pb-4">
+                <h1 class="display-3 text-white mb-3 animated slideInDown">Góp ý</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb text-uppercase">
+                        <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a href="/feedback">Góp Ý</a></li>
+                        <li class="breadcrumb-item text-white active">Góp Ý Sản Phẩm</li>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <!-- Header End -->
+
+        <!-- Job Detail Start -->
+        <div class="container-fluid pt-4 px-4">
+            <div class="d-flex justify-content-start mb-3">
+                <a href="/feedback" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Trở về</a>
+            </div>
+            <div class="card p-4 shadow-sm">
+                <h3 class="fw-bold">Góp ý sản phẩm</h3>
+                <p>Phản hồi của bạn rất quan trọng, JobSeeker mong nhận được nhiều góp ý từ bạn để cải thiện sản phẩm
+                    tốt
+                    hơn.</p>
+
+                <form id="feedbackForm" th:action="@{/feedback/submit}" th:object="${feedback}" method="post">
+                    <input type="hidden" id="satisfactionInput" th:field="*{rating}">
+                    <input type="hidden" name="userId" th:value="${session.userId}">
+                    <label class="fw-bold">Chủ đề cần góp ý </label>
+                    <div class="mb-3">
+                        <div class="btn-group d-flex flex-wrap" role="group">
+                            <th:block th:each="topic : ${topics}">
+                                <input type="checkbox" class="btn-check topic-checkbox" th:id="'topic-' + ${topic.id}"
+                                    th:value="${topic.id}" th:field="*{topics}">
+                                <label th:for="'topic-' + ${topic.id}" class="btn btn-outline-primary m-1 topic-label">
+                                    <span th:text="${topic.name}"></span>
+                                </label>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <label class="fw-bold">Mô tả góp ý <span class="text-danger">*</span></label>
+                    <textarea required class="form-control mb-3" th:field="*{description}" rows="4"
+                        placeholder="Mô tả góp ý của bạn giúp JobSeeker cải tiến sản phẩm, hỗ trợ bạn tốt hơn"></textarea>
+
+                    <label class="fw-bold">Bạn có hài lòng với JobSeeker không?</label>
+                    <div class="d-flex justify-content-between mb-4">
+                        <button type="button" class="btn btn-outline-primary flex-fill mx-1 satisfaction-btn"
+                            onclick="setSatisfaction('Rất tệ', this)">😡 Rất tệ</button>
+                        <button type="button" class="btn btn-outline-primary flex-fill mx-1 satisfaction-btn"
+                            onclick="setSatisfaction('Tệ', this)">😞 Tệ</button>
+                        <button type="button" class="btn btn-outline-primary flex-fill mx-1 satisfaction-btn"
+                            onclick="setSatisfaction('Bình thường', this)">😐 Bình thường</button>
+                        <button type="button" class="btn btn-outline-primary flex-fill mx-1 satisfaction-btn"
+                            onclick="setSatisfaction('Tốt', this)">😊 Tốt</button>
+                        <button type="button" class="btn btn-outline-primary flex-fill mx-1 satisfaction-btn"
+                            onclick="setSatisfaction('Tuyệt vời', this)">😍 Tuyệt vời</button>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-light me-2" onclick="resetForm()">Xóa form</button>
+                        <button type="submit" class="btn btn-primary">Gửi phản hồi</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <!-- Job Detail End -->
+
+
+        <!-- Footer Start -->
+        <div th:replace="~{layout/footer-seeker :: footer}"></div>
+        <!-- Footer End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+        integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/user/js/main.js"></script>
+    <script src="/user/js/handleAddFeedback.js"></script>
+
+</body>
+
+</html>

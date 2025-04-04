@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <title>Admin-Manage Account</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Favicon -->
+  <link href="img/favicon.ico" rel="icon">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icon Font Stylesheet -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Libraries Stylesheet -->
+  <link href="/manager/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="/manager/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="/manager/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Template Stylesheet -->
+  <link href="/manager/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+    integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Select2 CSS-->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+</head>
+
+<body>
+  <div class="container-fluid position-relative bg-white d-flex p-0">
+    <!-- Spinner Start -->
+    <div th:replace="~{layout/spinner-recruiter :: spinner-recruiter}"></div>
+    <!-- Spinner End -->
+
+
+    <!-- Sidebar Start -->
+    <div th:replace="~{layout/sidebar-recruiter:: sidebar-recruiter}"></div>
+    <!-- Sidebar End -->
+
+
+    <!-- Content Start -->
+    <div class="content">
+      <!-- Navbar Start -->
+      <div th:replace="~{layout/navbar-recruiter :: navbar-recruiter}"></div>
+      <!-- Navbar End -->
+
+
+      <!-- Mở đầu phần chính -->
+      <div class="container-fluid pt-4 px-4">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/recruiter/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/recruiter/manage-jobs">Danh sách tin tuyển dụng</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${job.title}"></li>
+          </ol>
+        </nav>
+        <!-- Viết code vào đây -->
+        <div class="bg-light rounded h-100 p-4">
+          <h6 class="mb-4">Đăng tin tuyển dụng</h6>
+          <form th:object="${job}" th:action="@{/recruiter/manage-jobs/update}" method="post">
+            <input type="hidden" th:field="*{company.id}" th:value="${session.companyId}">
+            <input type="hidden" th:field="*{id}">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="title" class="form-label">Tiêu đề</label>
+                <input type="text" class="form-control" id="title" th:field="*{title}" required>
+              </div>
+              <div class="col-md-6">
+                <label for="workingModel" class="form-label">Hình thức làm việc</label>
+                <select class="form-select" id="workingModel" th:field="*{workingModel}" required>
+                  <option value="" disabled selected>Chọn hình thức làm việc</option>
+                  <option value="Remote">Remote</option>
+                  <option value="At office">At office</option>
+                  <option value="Hybrid">Hybrid</option>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="salary" class="form-label">Mức lương</label>
+                <input type="text" class="form-control" id="salary" th:field="*{salary}" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Trạng thái</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" id="closed" type="radio" value="false" th:field="*{isOpening}">
+                    <label class="form-check-label" for="closed">Đã đóng</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" id="opening" type="radio" value="true" th:field="*{isOpening}">
+                    <label class="form-check-label" for="opening">Đang mở</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="skills" class="form-label">Kỹ năng</label>
+              <select id="skills" name="skills" class="form-select" multiple="multiple" th:field="*{skills}">
+                <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}">
+                </option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="levels" class="form-label">Vị trí tuyển dụng</label>
+              <select id="levels" name="levels" class="form-select" multiple="multiple" th:field="*{levels}">
+                <option th:each="level : ${levels}" th:value="${level.id}" th:text="${level.name}">
+                </option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Chi nhánh</label>
+              <div th:each="branch : ${branches}" class="form-check">
+                <input class="form-check-input" type="checkbox" th:value="${branch.id}" th:field="*{availableBranches}"
+                  th:id="${branch.id}">
+                <label class="form-check-label" th:for="${branch.id}" th:text="${branch.address}"></label><br>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Thông tin chi tiết</label>
+              <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+          </form>
+        </div>
+      </div>
+      <!-- Kết thúc phần chính -->
+
+
+      <!-- Footer Start -->
+      <div th:replace="~{layout/footer-recruiter :: footer-recruiter}"></div>
+      <!-- Footer End -->
+    </div>
+    <!-- Content End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+  </div>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="/manager/lib/tinymce/js/tinymce/tinymce.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+    integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Template Javascript -->
+  <script src="/manager/js/main.js"></script>
+</body>
+
+</html>

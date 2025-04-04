@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>JobEntry - Job Portal Website Template</title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta sec:authorize="isAuthenticated()" name="_csrf" th:content="${_csrf.token}" />
+	<meta sec:authorize="isAuthenticated()" name="_csrf_header" th:content="${_csrf.headerName}" />
+
+
+	<!-- Favicon -->
+	<link href="/user/img/favicon.ico" rel="icon">
+
+	<!-- Google Web Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+	<!-- Icon Font Stylesheet -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+	<!-- Libraries Stylesheet -->
+	<link href="/user/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+	<!-- Customized Bootstrap Stylesheet -->
+	<link href="/user/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Template Stylesheet -->
+	<link href="/user/css/style.css" rel="stylesheet">
+	<!-- Toastr library -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+		integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!-- Lightbox stylesheet -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css">
+</head>
+
+<body>
+	<div class="container-xxl bg-white p-0">
+		<!-- Spinner Start -->
+		<div id="spinner"
+			class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+			<div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+		<!-- Spinner End -->
+
+
+		<!-- Navbar Start -->
+		<div th:replace="~{layout/navbar-seeker :: navbar}"></div>
+		<!-- Navbar End -->
+
+
+		<!-- Breadcrum start -->
+		<div class="container-xxl py-5 bg-dark page-header mb-5">
+			<div class="container my-5 pt-5 pb-4">
+				<h1 class="display-3 text-white mb-3 animated slideInDown" th:text="${company.name}"></h1>
+			<nav aria-label="breadcrumb">
+					<ol class="breadcrumb text-uppercase">
+						<li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+						<li class="breadcrumb-item"><a href="/companies">Công ty IT</a></li>
+						<li class="breadcrumb-item text-white active" aria-current="page" th:text="${company.name}">
+						</li>
+					</ol>
+				</nav>
+			</div>
+		</div>
+		<!-- Breadcrum end -->
+
+
+		<!-- Job Detail Start -->
+		<div class="container-xxl py-5">
+			<div class="container">
+				<div class="row gy-5 gx-4">
+					<div class="col-lg-8">
+						<div class="d-flex align-items-center mb-5">
+							<div class="image-container">
+								<img th:src="@{/company-logo/{logo}(logo=${company.logo})}" alt="Company logo" />
+							</div>
+							<div class="text-start ps-4">
+								<h3 class="mb-3" th:text="${company.name}"></h3>
+								<span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>
+									<span th:text="${cities}"></span>
+								</span>
+								<div sec:authorize="hasRole('ROLE_Seeker')" class="d-flex mt-3">
+									<a th:href="@{/review/write-review/{id}(id=${company.id})}" class="btn btn-primary me-2">Viết đánh
+										giá</a>
+									<a class="btn btn-light" id="toggle-follow-company" th:if="${following == null}"
+										th:attr="data-company-id=${company.id}, data-user-id=${session.userId}">
+										Theo dõi
+									</a>
+									<a class="btn btn-light" id="toggle-follow-company" th:if="${following != null}"
+										th:attr="data-company-id=${company.id}, data-user-id=${session.userId}">
+										<i class="fa fa-check me-2"></i>Đang theo dõi
+									</a>
+								</div>
+
+								<div sec:authorize="isAnonymous()" class="d-flex mt-3">
+									<a href="/login" class="btn btn-primary me-2">Viết đánh giá</a>
+									<a href="/login" class="btn btn-light">Theo dõi</a>
+								</div>
+							</div>
+						</div>
+						<div class="mb-5">
+							<div class="custom-tabs">
+								<a th:href="@{/companies/{id}(id=${company.id})}" class="nav-link active">Tổng quan</a>
+								<a th:href="@{/companies/review/{id}(id=${company.id})}" class="nav-link">
+									Các đánh giá
+								</a>
+							</div>
+						</div>
+						<div class="general-info mb-3">
+							<h4>Thông tin chung</h4>
+							<div class="row">
+								<!-- Column 1 -->
+								<div class="col-md-4 info-item">
+									<span class="label">Mô hình công ty</span>
+									<span class="value" th:text="${company.type}"></span>
+								</div>
+								<!-- Column 2 -->
+								<div class="col-md-4 info-item">
+									<span class="label">Lĩnh vực</span>
+									<span class="value" th:text="${company.industry}"></span>
+								</div>
+								<!-- Column 3 -->
+								<div class="col-md-4 info-item">
+									<span class="label">Quốc gia</span>
+									<span class="value" th:text="${company.country}">
+									</span>
+								</div>
+								<!-- Column 4 -->
+								<div class="col-md-4 info-item mt-3">
+									<span class="label">Quy mô</span>
+									<span class="value" th:text="${company.size}"></span>
+								</div>
+								<!-- Column 5 -->
+								<div class="col-md-4 info-item mt-3">
+									<span class="label">Ngày làm việc</span>
+									<span class="value">Thứ 2 - Thứ 6</span>
+								</div>
+								<!-- Column 6 -->
+								<div class="col-md-4 info-item mt-3">
+									<span class="label">Chính sách làm thêm giờ</span>
+									<span class="value" th:text="${company.otPolicy}"></span>
+								</div>
+							</div>
+						</div>
+
+						<div class="mb-3">
+							<!-- Gallery -->
+							<div class="d-flex flex-wrap gap-2 gallery mb-3">
+								<a th:each="image : ${company.companyImages}" data-fancybox="gallery"
+									th:href="@{/company-images/{image}(image=${image.image})}">
+									<img th:src="@{/company-images/{image}(image=${image.image})}" alt="Company">
+								</a>
+							</div>
+							<h4>Kĩ năng chủ đạo</h4>
+							<div class="d-flex flex-wrap gap-2 mt-3 mb-3">
+								<!-- Tăng gap -->
+								<span th:each="skill : ${company.skills}"
+									class="skill-tag badge bg-light text-dark rounded-pill px-3 py-2" th:text="${skill.name}"
+									th:attr="data-skill-id=${skill.id}"></span>
+							</div>
+						</div>
+						<div class="mb-5">
+							<a th:href="${company.website}" class="btn btn-light btn-lg" target="_blank">
+								<i class="fa fa-globe text-primary me-2"></i>
+								Website công ty
+							</a>
+						</div>
+
+						<div class="mb-3" th:utext="${company.description}">
+						</div>
+
+						<div class="mb-3">
+							<h4>Địa điểm</h4>
+							<div class="row">
+								<div class="col-md-4 branch-list">
+									<div th:each="branch : ${company.branches}" class="card mb-3 address-card">
+										<div class="card-body">
+											<p class="card-text address" th:text="${branch.address}"></p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-8">
+									<div id="map" style="height: 400px; width: 100%;"></div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- List of jobs: -->
+					<div class="col-lg-4">
+						<div class="sticky-title">
+							<h4><span th:text="${company.jobs.size()}"></span> việc làm đang tuyển dụng
+							</h4>
+						</div>
+						<div class="sticky-wrapper">
+							<div th:each="job : ${company.jobs}">
+								<div class="card mb-3 shadow-sm" th:attr="data-job-id=${job.id}">
+									<div class="card-body p-4">
+										<!-- Job Title -->
+										<h6 class="card-title mb-3 job-title">
+											<a th:href="@{/jobs/{id}(id=${job.id})}" th:text="${job.title}"></a>
+										</h6>
+										<!-- Company Info with logo -->
+										<div class="d-flex align-items-center mb-3">
+											<div class="image-container-small text-center">
+												<img th:src="@{/company-logo/{logo}(logo=${company.logo})}" alt="Company Logo"
+													class="img-fluid rounded-circle">
+											</div>
+											<span class="mb-0 ms-2"><strong th:text="${company.name}"></strong></span>
+										</div>
+
+										<!-- Salary and Location -->
+										<div class="d-flex flex-column">
+											<!-- Salary Section -->
+											<div class="text-truncate mb-2">
+												<i class="far fa-money-bill-alt text-primary me-2"></i>
+												<span sec:authorize="isAuthenticated()" th:text="${job.salary}"></span>
+												<span sec:authorize="isAnonymous()">
+													<a href="/login" class="text-primary">Đăng nhập để xem mức lương</a>
+												</span>
+											</div>
+
+											<!-- Available Branches -->
+											<div th:each="branch : ${job.availableBranches}" class="text-truncate mb-2">
+												<i class="fa fa-map-marker-alt text-primary me-2"></i>
+												<span th:text="${branch.province.name}"></span>
+											</div>
+
+											<!-- Working Model -->
+											<div class="text-truncate">
+												<i class="fa fa-briefcase text-primary me-2"></i>
+												<span th:text="${job.workingModel}"></span>
+											</div>
+										</div>
+
+										<hr class="my-3" />
+
+										<!-- Skills Badges -->
+										<div class="d-flex flex-wrap gap-2">
+											<span th:each="skill : ${job.skills}"
+												class="skill-tag badge bg-light text-dark rounded-pill px-3 py-2"
+												th:attr="data-skill-id=${skill.id}" th:text="${skill.name}"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Job Detail End -->
+
+
+	<!-- Footer Start -->
+	<div th:replace="~{layout/footer-seeker :: footer}"></div>
+	<!-- Footer End -->
+
+
+	<!-- Back to Top -->
+	<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+	<!-- JavaScript Libraries -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			var galleryImages = $('.gallery a');
+			galleryImages.each(function (index) {
+				if (index === 2) {
+					var remaining = galleryImages.length - 3;
+					if (remaining === 0) return;
+					$(this).addClass('blur');
+					$(this).attr('data-remaining', '+' + remaining);
+					console.log(remaining);
+				} else if (index > 2) {
+					$(this).hide();
+				}
+			});
+		});
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+		integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<script src="/user/js/main.js"></script>
+	<script th:src="'https://maps.gomaps.pro/maps/api/js?key=' + ${MAPS_API_KEY}"></script>
+	<script>
+		let map, marker;
+		// Initialize the map after geocoding
+		function initMap(lat, lng) {
+			const location = { lat: lat, lng: lng };
+
+			// Create the map object centered at the geocoded location
+			map = new google.maps.Map(document.getElementById("map"), {
+				center: location,
+				zoom: 16,
+			});
+
+			// Add a marker at the geocoded location
+			marker = new google.maps.Marker({
+				position: location,
+				map: map,
+			});
+		}
+
+		// Update the map to show the selected location
+		function updateMap(lat, lng) {
+			const newLocation = { lat: lat, lng: lng };
+			// Move the map center to the new location
+			map.setCenter(newLocation);
+			// Move the marker to the new location
+			marker.setPosition(newLocation);
+		}
+
+		// Geocode an address to get its latitude and longitude
+		function geocodeAddress(address, callback) {
+			if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+				alert('Google Maps API is not loaded correctly.');
+				return;
+			}
+			// Sanitize the address input (remove extra spaces, special characters, etc.)
+			const sanitizedAddress = address.trim();
+			if (!sanitizedAddress) {
+				alert('Address cannot be empty or invalid');
+				return;
+			}
+			const geocoder = new google.maps.Geocoder();
+			geocoder.geocode({ address: sanitizedAddress }, (results, status) => {
+				if (status === google.maps.GeocoderStatus.OK) {
+					const location = results[0].geometry.location;
+					callback(location.lat(), location.lng());
+				} else {
+					console.error("Geocode failed: ", status, results);
+					// Handling 400 Bad Request specifically
+					if (status === google.maps.GeocoderStatus.ERROR) {
+						alert("Geocode was not successful due to a bad request (400 error). Please check the address format or API key.");
+					} else {
+						alert("Geocode was not successful for the following reason: " + status);
+					}
+				}
+			});
+		}
+		// Automatically search for the first address on load and inject the map later
+		function autoSearchFirstAddress() {
+			const firstAddressElement = document.querySelectorAll(".address-card")[0];
+			const firstAddress = firstAddressElement.querySelector(".address").innerHTML;
+			firstAddressElement.classList.add("selected");
+
+			// First address in the list
+			geocodeAddress(firstAddress, (lat, lng) => {
+				initMap(lat, lng); // Load the Google Maps API and initialize the map
+			});
+		}
+
+		// Wait until Google Maps API is fully loaded before initiating the first address search
+		$(document).ready(function () {
+			autoSearchFirstAddress();
+
+			$(document).on('click', '.address-card', function () {
+				if ($(this).hasClass('selected')) {
+					return;
+				}
+				$('.selected').removeClass('selected');
+				$(this).addClass('selected');
+				var address = $(this).find('.address').text();
+				geocodeAddress(address, (lat, lng) => {
+					updateMap(lat, lng);
+				});
+			});
+
+			var csrfToken = $('meta[name="_csrf"]').attr('content');
+			var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+			$.ajaxSetup({
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader(csrfHeader, csrfToken);
+				}
+			});
+
+			$(document).on('mouseenter', '#toggle-follow-company', function () {
+				if ($(this).find('i').length > 0) {
+					$(this).html('<i class="fa fa-times me-2"></i>Hủy theo dõi');
+				}
+			});
+
+			$(document).on('mouseleave', '#toggle-follow-company', function () {
+				if ($(this).find('i').length > 0) {
+					$(this).html('<i class="fa fa-check me-2"></i>Đang theo dõi');
+				}
+			});
+
+			$(document).on('click', '#toggle-follow-company', function () {
+				if ($('#not-signed-in').length > 0) {
+					toastr.warning("Bạn cần đăng nhập để thực hiện thao tác này", "Lỗi thao tác");
+					return;
+				}
+				var companyId = $(this).data('company-id');
+				var isFollowing = $(this).find('i').length > 0;
+				var url = isFollowing ? `/seeker/api/unfollow-company/${companyId}` : `/seeker/api/follow-company/${companyId}`;
+				var successMessage = isFollowing ? "Hủy theo dõi thành công" : "Theo dõi thành công";
+
+				$.ajax({
+					url: url,
+					type: 'POST',
+					contentType: 'application/json',
+					success: function (response) {
+						toastr.success(successMessage, "Thành công");
+						if (!isFollowing) {
+							$('#toggle-follow-company').html('<i class="fa fa-check me-2"></i>Đang theo dõi');
+						} else {
+							$('#toggle-follow-company').html('Theo dõi');
+						}
+					},
+					error: function (xhr, status, error) {
+						alert('Có lỗi xảy ra, check code đi mậy: ' + error);
+					}
+				});
+			});
+		});
+	</script>
+</body>
+
+</html>

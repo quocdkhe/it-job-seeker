@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>JobEntry - Job Portal Website Template</title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<meta sec:authorize="isAuthenticated()" name="_csrf" th:content="${_csrf.token}" />
+	<meta sec:authorize="isAuthenticated()" name="_csrf_header" th:content="${_csrf.headerName}" />
+
+	<!-- Favicon -->
+	<link href="/user/img/favicon.ico" rel="icon">
+
+	<!-- Google Web Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+	<!-- Icon Font Stylesheet -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+	<!-- Libraries Stylesheet -->
+	<link href="/user/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+	<!-- Customized Bootstrap Stylesheet -->
+	<link href="/user/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- Template Stylesheet -->
+	<link href="/user/css/style.css" rel="stylesheet">
+
+	<!-- Toastr library -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+		integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!-- Lightbox stylesheet -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css">
+</head>
+
+<body>
+	<div class="container-xxl bg-white p-0">
+		<!-- Spinner Start -->
+		<div id="spinner"
+			class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+			<div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+		<!-- Spinner End -->
+
+
+		<!-- Navbar Start -->
+		<div th:replace="~{layout/navbar-seeker :: navbar}"></div>
+		<!-- Navbar End -->
+
+
+		<!-- Breadcrumb start -->
+		<div class="container-xxl py-5 bg-dark page-header mb-5">
+			<div class="container my-5 pt-5 pb-4">
+				<h1 class="display-3 text-white mb-3 animated slideInDown">Thông tin việc làm</h1>
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb text-uppercase">
+						<li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+						<li class="breadcrumb-item"><a href="/jobs">Việc làm IT</a></li>
+						<li class="breadcrumb-item text-white active" aria-current="page" th:text="${job.title}"></li>
+					</ol>
+				</nav>
+			</div>
+		</div>
+		<!-- Breadcrumb start -->
+
+
+		<!-- Job Detail Start -->
+		<div class="container-xxl py-5 wow fadeInUp">
+			<div class="container">
+				<div class="row gy-5 gx-4">
+					<div class="col-lg-8">
+						<div class="mb-3">
+							<h3 class="mb-3" th:text="${job.title}"></h3>
+							<p class="text-truncate me-3" th:text="${job.company.name}">
+							</p>
+							<p class="text-truncate me-3" style="font-size: 1.25rem; font-weight: bold;">
+								<i class="far fa-money-bill-alt text-primary me-2"></i>
+								<span sec:authorize="isAuthenticated()" th:text="${job.salary}"></span>
+								<a href="/login" sec:authorize="isAnonymous()">Đăng nhập để xem mức lương</a>
+							</p>
+
+							<div sec:authorize="hasRole('ROLE_Seeker')" class="d-flex mb-3">
+
+								<th:block th:if="${applied == null}">
+									<a th:href="@{/jobs/{id}/apply(id=${job.id})}" class="btn btn-primary flex-grow-1 me-2">Ứng tuyển</a>
+									<a class="btn btn-light" id="handle-add-delete-favorite-job" th:attr="data-job-id=${job.id}">
+										<i th:if="${liked == null}" class="far fa-heart text-primary"></i>
+										<i th:if="${liked != null}" class="fa fa-heart text-primary"></i>
+									</a>
+								</th:block>
+								<th:block th:if="${applied != null}">
+									<div class="alert alert-success flex-grow-1 me-2" role="alert">
+										Bạn đã ứng tuyển công việc này. Bạn có thể ứng tuyển lại sau 7 ngày. <br />
+										Xem các công việc đã ứng tuyển
+										<a href="/cv-status" class="alert-link"><u>Tại đây</u></a>.
+									</div>
+								</th:block>
+							</div>
+
+							<div sec:authorize="isAnonymous()" class="d-flex mb-3">
+								<a href="/login" class="btn btn-primary flex-grow-1 me-2">Ứng tuyển</a>
+								<a href="/login" class="btn btn-light">
+									<i class="far fa-heart text-primary"></i>
+								</a>
+							</div>
+
+							<!-- Gallery -->
+							<div class="d-flex flex-wrap gap-2 mt-3 mb-3 gallery">
+								<a th:each="image : ${job.company.companyImages}" data-fancybox="gallery"
+									th:href="@{/company-images/{image}(image=${image.image})}">
+									<img th:src="@{/company-images/{image}(image=${image.image})}" alt="Company">
+								</a>
+							</div>
+
+							<div th:each="branch : ${job.availableBranches}" class="text-truncate me-3 mb-3">
+								<i class="fa fa-map-marker-alt text-primary me-2"></i>
+								<span class="me-2" th:text="${branch.address}"></span>
+								<a href="#" class="search-address">
+									<i class="fa fa-external-link-alt text-primary"></i>
+								</a>
+							</div>
+							<div class="text-truncate me-3 mb-3"><i class="fa fa-briefcase text-primary me-2"></i>
+								<span th:text="${job.workingModel}"></span>
+							</div>
+
+							<div class="text-truncate me-3 mb-3"><i class="far fa-clock text-primary me-2"></i>
+								Cập nhật <span th:text="${daysAgo}"></span> ngày trước
+							</div>
+							<div class="d-flex flex-wrap gap-2 mt-3">
+								Kỹ năng:
+								<!-- Tăng gap -->
+								<span th:each="skill : ${job.skills}" class="skill-tag badge bg-light text-dark rounded-pill px-3 py-2"
+									th:text="${skill.name}" th:attr="data-skill-id=${skill.id}"></span>
+							</div>
+						</div>
+
+						<div class="mb-5 mt-5">
+							<p th:utext="${job.description}"></p>
+						</div>
+					</div>
+
+					<div class="col-lg-4">
+						<div style="top: 120px; z-index: 1;" class="card sticky-lg-top">
+							<div class="card-body container">
+								<div class="row">
+									<div class="col-md-4">
+										<div class="image-container text-center">
+											<img th:src="@{/company-logo/{logo}(logo=${job.company.logo})}" alt="" />
+										</div>
+									</div>
+									<div class="col-md-8">
+										<h6 th:text="${job.company.name}"></h6>
+										<a th:href="@{/companies/{id}(id=${job.company.id})}">
+											<i class="fa fa-external-link-alt text-primary me-2"></i>Xem công ty
+										</a>
+									</div>
+								</div>
+
+								<div class="row mt-3">
+									<div class="col-12 mb-2">
+										<p><strong>Mô hình công ty:</strong> <span th:text="${job.company.type}"></span></p>
+									</div>
+									<div class="col-12 mb-2">
+										<p><strong>Lĩnh vực:</strong> <span th:text="${job.company.industry}"></span></p>
+									</div>
+									<div class="col-12 mb-2">
+										<p><strong>Quy mô:</strong> <span th:text="${job.company.size}"></span></p>
+									</div>
+									<div class="col-12 mb-2">
+										<p><strong>Quốc gia:</strong> <span th:text="${job.company.country}"></span></p>
+									</div>
+									<div class="col-12 mb-2">
+										<p><strong>Thời gian làm việc:</strong> <span>Thứ 2 - Thứ 6</span></p>
+									</div>
+									<div class="col-12 mb-2">
+										<p><strong>Chính sách OT:</strong> <span th:text="${job.company.otPolicy}"></span></p>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Job Detail End -->
+
+
+		<!-- Footer Start -->
+		<div th:replace="~{layout/footer-seeker :: footer}"></div>
+		<!-- Footer End -->
+
+	</div>
+
+	<!-- JavaScript Libraries -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+		integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<!-- Template Javascript -->
+	<script>
+		$(document).ready(function () {
+			var galleryImages = $('.gallery a');
+			galleryImages.each(function (index) {
+				if (index === 2) {
+					var remaining = galleryImages.length - 3;
+					if (remaining == 0) {
+						return;
+					}
+					$(this).addClass('blur');
+					$(this).attr('data-remaining', '+' + remaining);
+					console.log(remaining);
+				} else if (index > 2) {
+					$(this).hide();
+				}
+			});
+		});
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
+	<script src="/user/js/main.js"></script>
+	<script src="/user/js/toggle-favorite-job.js"></script>
+	<script>
+		$(".search-address").click(function (event) {
+			event.preventDefault();
+			const address = $(this).closest('div').find('span').text();
+			if (address) {
+				const googleMapsURL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+				window.open(googleMapsURL, "_blank");
+			}
+		});
+	</script>
+</body>
+
+</html>

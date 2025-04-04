@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Admin-Manage Account</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/manager/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastr library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+        integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css">
+
+    <!-- Template Stylesheet -->
+    <link href="/manager/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-fluid position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div th:replace="~{layout/spinner-recruiter :: spinner-recruiter}"></div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div th:replace="~{layout/sidebar-recruiter:: sidebar-recruiter}"></div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <div th:replace="~{layout/navbar-recruiter :: navbar-recruiter}"></div>
+            <!-- Navbar End -->
+
+            <!-- Mở đầu phần chính -->
+            <div class="container-fluid pt-4 px-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/recruiter/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Phản hồi hệ thống</li>
+                    </ol>
+                </nav>
+                <!-- Viết code vào đây -->
+                <div class="bg-light rounded h-100 p-4">
+                    <div class="d-flex justify-content-start mb-3">
+                        <a href="/recruiter/choose-feedback-type" class="btn btn-primary"><i
+                                class="bi bi-arrow-left"></i> Trở về</a>
+                    </div>
+                    <div class="card p-4 shadow-sm">
+                        <h4 class="fw-bold">Yêu cầu hỗ trợ</h4>
+
+                        <form id="supportForm" th:action="@{/support/submit-recruiter}" th:object="${supportRequest}"
+                            method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="userId" th:value="${session.userId}">
+                            <div class="mb-3">
+                                <label class="fw-bold">Số điện thoại <span class="text-danger">*</span></label>
+                                <input required type="text" class="form-control" th:field="*{phone}"
+                                    placeholder="Nhập số điện thoại">
+                                <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" style="color: red;">
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="fw-bold">Email <span class="text-danger">*</span></label>
+                                    <input required type="email" class="form-control" th:field="*{email}"
+                                        placeholder="Nhập email">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="fw-bold">Chủ đề cần hỗ trợ <span class="text-danger">*</span></label>
+                                    <select required class="form-select" th:field="*{topic}">
+                                        <option value="">Chọn chủ đề</option>
+                                        <option value="Vấn đề tài khoản">Vấn đề tài khoản</option>
+                                        <option value="Góp ý sản phẩm">Góp ý sản phẩm</option>
+                                        <option value="Khác">Khác</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="fw-bold">Mô tả vấn đề cần hỗ trợ <span
+                                            class="text-danger">*</span></label>
+                                    <textarea class="form-control" th:field="*{description}" rows="4"
+                                        placeholder="Mô tả rõ vấn đề bạn gặp phải hoặc thông tin góp ý..."></textarea>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <!-- Hình ảnh minh họa 1 -->
+                                    <div class="col-md-6 text-center">
+                                        <label class="fw-bold mb-2">Hình ảnh minh họa 1</label>
+                                        <div class="card p-2" style="background-color: #dddddd;">
+                                            <input name="imageFile1" type="file" class="form-control" id="imageFile1"
+                                                accept=".png, .jpg, .jpeg, .webp" style="display: none;" />
+                                            <img class="img-fluid rounded" style="max-width: auto; cursor: pointer;"
+                                                alt="Click để chọn ảnh minh họa 1" id="imagePreview1"
+                                                th:src="@{/illustration1/{image1}(image1=${illustration1})}"
+                                                onclick="document.getElementById('imageFile1').click();" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Hình ảnh minh họa 2 -->
+                                    <div class="col-md-6 text-center">
+                                        <label class="fw-bold mb-2">Hình ảnh minh họa 2</label>
+                                        <div class="card p-2" style="background-color: #dddddd;">
+                                            <input name="imageFile2" type="file" class="form-control" id="imageFile2"
+                                                accept=".png, .jpg, .jpeg, .webp" style="display: none;" />
+                                            <img class="img-fluid rounded" style="max-width: auto; cursor: pointer;"
+                                                alt="Click để chọn ảnh minh họa 2" id="imagePreview2"
+                                                th:src="@{/illustration2/{image2}(image2=${illustration2})}"
+                                                onclick="document.getElementById('imageFile2').click();" />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="alert alert-success" role="alert">
+                                    JobSeeker sẽ gửi phản hồi tới email bạn nhập trong vòng 24 giờ (không kể Thứ 7, Chủ
+                                    nhật, ngày
+                                    lễ)
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-light me-2" onclick="clearForm()">Xóa
+                                        form</button>
+                                    <button type="submit" class="btn btn-primary">Gửi phản hồi</button>
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Kết thúc phần chính -->
+
+
+            <!-- Footer Start -->
+            <div th:replace="~{layout/footer-recruiter :: footer-recruiter}"></div>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+        integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Template Javascript -->
+    <script src="/manager/js/main.js"></script>
+    <script src="/manager/js/handleAddFeedback.js"></script>
+
+</body>
+
+</html>

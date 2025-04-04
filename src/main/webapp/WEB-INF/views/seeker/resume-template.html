@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<meta name="viewport" content="width=device-width" />
+	<meta name="description" content="The Curriculum Vitae of Joe Bloggs." />
+	<meta charset="UTF-8">
+
+	<link type="text/css" rel="stylesheet" href="/user/resume-asset/style.css">
+	<link href='http://fonts.googleapis.com/css?family=Rokkitt:400,700|Lato:400,300' rel='stylesheet' type='text/css'>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Resume Template</title>
+
+	<!-- Favicon -->
+	<link href="/user/img/favicon.ico" rel="icon">
+
+	<!-- Google Web Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+
+	<!-- Icon Font Stylesheet -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+	<!-- Libraries Stylesheet -->
+	<link href="/user/lib/animate/animate.min.css" rel="stylesheet">
+	<link href="/user/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+	<!-- Customized Bootstrap Stylesheet -->
+	<link href="/user/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body id="top">
+
+	<div class="row">
+		<div class="d-block col-md-4">
+			<!-- Left side: Back Button -->
+			<div class="d-flex align-items-start">
+				<a href="/" class="btn btn-dark"><i class="bi bi-arrow-left" ></i></a>
+			</div>
+
+			<!-- Right side: Centered Content -->
+			<div class="mt-5 flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+				<button id="download-pdf" class="btn btn-lg btn-success mb-3">Xem trước PDF</button>
+
+				<!-- Button to open the modal -->
+				<button type="button" class="btn btn-lg mb-3" data-bs-toggle="modal" style="background-color: #0D6EFD; color: white;" data-bs-target="#exampleModal">
+					Form nhập CV
+				</button>
+
+				<!-- Color Picker -->
+				<div class="text-center">
+					<p class="mb-2">Chọn màu sắc:</p>
+					<div class="color-picker d-flex justify-content-center">
+						<div class="color-option mx-2" data-color="#00b074"></div>
+						<div class="color-option mx-2" data-color="#ff7613"></div>
+						<div class="color-option mx-2" data-color="#014868"></div>
+						<div class="color-option mx-2" data-color="black"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="cv" class="active col-md-8">
+			<div class="mainDetails">
+				<div id="headshot" class="quickFade" onclick="triggerFileInput()">
+					<img class="avatar-img" src="/user/resume-asset/headshot.jpg" alt="Alan Smith" />
+					<input type="file" accept="image/*" style="display: none;" onchange="changeImage(event)" class="file-input">
+				</div>
+				<div id="name">
+					<h1 class="quickFade delayTwo" id="name-input" contenteditable="true">Full Name</h1>
+					<h2 class="quickFade delayThree" id="title-input" contenteditable="true">Job Title</h2>
+				</div>
+
+				<div id="contactDetails" class="quickFade delayFour">
+					<ul>
+						<li><i class="bi bi-geo-alt"></i> <span id="address-input" contenteditable="true">Address</span>
+						</li>
+						<li><i class="bi bi-envelope"></i> <span id="email-input" contenteditable="true">Email</span></li>
+						<li><i class="bi bi-telephone"></i> <span id="phone-input" contenteditable="true">Phone</span></li>
+						<li><i class="bi bi-globe"></i> <span id="web-input" contenteditable="true">Website</span></li>
+					</ul>
+				</div>
+				<div class="clear"></div>
+			</div>
+
+			<div id="mainArea" class="quickFade delayFive">
+				<section>
+					<article>
+						<div class="sectionTitle">
+							<h1>Personal Profile</h1>
+						</div>
+
+						<div class="sectionContent">
+							<p id="introduction-input" contenteditable="true">
+								 Introduction text goes here, mention your career goals.
+							</p>
+						</div>
+					</article>
+					<div class="clear"></div>
+				</section>
+
+				<section>
+					<div class="sectionTitle">
+						<h1>Key Skills</h1>
+					</div>
+
+					<div class="sectionContent">
+						<ul class="keySkills">
+							<li id="skill-name-display-0" contenteditable="true" style="display: none;"></li>
+						</ul>
+					</div>
+					<div class="clear"></div>
+				</section>
+				<section>
+					<div class="sectionTitle">
+						<h1>Education</h1>
+					</div>
+
+					<div class="sectionContent">
+						<article id="education-display-0" style="display: none;">
+							<h2 id="education-name-display-0" contenteditable="true">College/University</h2>
+							<p class="subDetails" contenteditable="true"><span id="education-date-from-display-0"></span>
+								<i class="bi bi-arrow-right" style="font-size: smaller;"></i><span
+									id="education-date-to-display-0"></span>
+							</p>
+							<p id="education-detail-display-0" contenteditable="true">Lorem ipsum dolor sit amet,
+								consectetur adipiscing elit.
+								Donec ultricies massa et erat
+								luctus
+								hendrerit. Curabitur non consequat enim.</p>
+						</article>
+					</div>
+					<div class="clear"></div>
+				</section>
+
+				<section>
+					<div class="sectionTitle">
+						<h1>Work Experience</h1>
+					</div>
+
+					<div class="sectionContent">
+						<article id="experience-display-0" style="display: none;">
+							<h2 contenteditable="true"> <span id="experience-title-display-0">Job Title</span> at <span
+									id="experience-name-display-0">Company</span></h2>
+							<p class="subDetails" contenteditable="true"><span id="experience-date-from-display-0"></span>
+								<i class="bi bi-arrow-right" style="font-size: smaller;"></i><span
+									id="experience-date-to-display-0"></span>
+							</p>
+							<p id="experience-detail-display-0" contenteditable="true">Lorem ipsum dolor sit amet,
+								consectetur adipiscing elit.
+								Donec ultricies massa et erat
+								luctus
+								hendrerit. Curabitur non consequat enim. Vestibulum bibendum mattis dignissim. Proin id
+								sapien quis libero interdum porttitor.</p>
+						</article>
+					</div>
+					<div class="clear"></div>
+				</section>
+
+				<section>
+					<div class="sectionTitle">
+						<h1>Projects</h1>
+					</div>
+
+					<div class="sectionContent">
+						<article id="project-display-0" style="display: none;">
+							<h2 id="project-name-display-0" contenteditable="true">Name of project</h2>
+							<p class="subDetails" contenteditable="true"><span id="project-date-from-display-0"></span>
+								<i class="bi bi-arrow-right" style="font-size: smaller;"></i><span
+									id="project-date-to-display-0"></span>
+							</p>
+							<p id="project-detail-display-0" contenteditable="true">Lorem ipsum dolor sit amet,
+								consectetur adipiscing elit.
+								Donec
+								ultricies massa et erat
+								luctus
+								hendrerit. Curabitur non consequat enim. Vestibulum bibendum mattis dignissim. Proin id
+								sapien quis libero interdum porttitor.</p>
+						</article>
+					</div>
+					<div class="clear"></div>
+				</section>
+			</div>
+		</div>
+		<!-- Modal Popup -->
+		<div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-xl"> <!-- modal-xl giúp cửa sổ rộng hơn -->
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="pdfModalLabel">Xem trước PDF</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+
+					<div class="row g-3 align-items-center mx-3">
+						<div class="col-lg-10 col-12 mb-2 mb-lg-0">
+							<input type="text" id="file-name" class="form-control"
+								placeholder="Nhập tên file (mặc định: my_resume.pdf)">
+						</div>
+						<div class="col-lg-2 col-12">
+							<button class="btn btn-success w-100" id="download-now">Tải xuống ngay</button>
+						</div>
+					</div>
+
+					<div class="modal-body" style="overflow: auto; max-height: 80vh;">
+						<iframe id="pdf-preview" style="height: 800px; max-height: 80%; width: 1000px; max-width: 100%;"></iframe>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Form nhập CV</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<!-- Add your form content here -->
+						<div class="accordion" id="accordionExample">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="headingOne">
+									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+										aria-expanded="true" aria-controls="collapseOne">
+										Thông tin cá nhân
+									</button>
+								</h2>
+								<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+									data-bs-parent="#accordionExample">
+									<div class="accordion-body">
+										<form>
+											<div class="mb-3">
+												<label for="fullname" class="form-label">Nhập tên</label>
+												<input type="text" class="form-control" id="fullname">
+											</div>
+											<div class="mb-3">
+												<label for="title" class="form-label">Nhập chức danh</label>
+												<input type="text" class="form-control" id="title">
+											</div>
+											<div class="mb-3">
+												<label for="address" class="form-label">Nhập địa chỉ</label>
+												<input type="text" class="form-control" id="address">
+											</div>
+											<div class="mb-3">
+												<label for="email" class="form-label">Nhập email</label>
+												<input type="text" class="form-control" id="email">
+											</div>
+											<div class="mb-3">
+												<label for="phone" class="form-label">Nhập số điện thoại</label>
+												<input type="text" class="form-control" id="phone">
+											</div>
+											<div class="mb-3">
+												<label for="web" class="form-label">Nhập trang web</label>
+												<input type="text" class="form-control" id="web">
+											</div>
+											<div class="mb-3">
+												<label for="introduction" class="form-label">Nhập mô tả bản
+													thân</label>
+												<textarea type="text" class="form-control" id="introduction" style="height: 100px;"></textarea>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="headingThree">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+										data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+										Kĩ năng
+									</button>
+								</h2>
+								<div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+									data-bs-parent="#accordionExample">
+									<div class="accordion-body">
+										<!-- Skill form content -->
+										<div class="mb-3">
+											<h4>Kĩ năng <button id="addSkill" class="btn"><i class="bi bi-plus-circle-fill"
+														style="color:#00b074; font-size: larger;"></i></button></h4>
+											<div id="skill-0" style="border: 1px solid black;">
+												<label for="skill-name" class="form-label">Tên kĩ năng</label>
+												<select id="skill-name" class="form-select">
+
+													<option th:each="skill : ${skills}" th:text="${skill.name}"></option>
+												</select>
+											</div>
+											<div id="skills-container"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="headingTwo">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+										data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+										Học vấn
+									</button>
+								</h2>
+								<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+									data-bs-parent="#accordionExample">
+									<div class="accordion-body">
+										<!-- Education form content -->
+										<div class="mb-3">
+											<h4>Học vấn <button id="addEducation" class="btn"><i class="bi bi-plus-circle-fill"
+														style="color:#00b074; font-size: larger;"></i></button></h4>
+											<div id="education-0" class="mb-3"
+												style="border: 0.5px solid lightslategrey; display: none; padding:5px; border-radius: 5px;">
+												<label for="education-name-input-0" class="form-label">Trường
+													học</label>
+												<input type="text" class="form-control" id="education-name-input-0"></input>
+
+
+												<div class="row">
+													<div class="col-md-6">
+														<label for="education-date-from-input-0" class="form-label">Từ</label>
+														<input type="month" class="form-control" id="education-date-from-input-0"></input>
+													</div>
+
+													<div class="col-md-6"><label for="education-date-to-input-0" class="form-label">Đến</label>
+														<input type="month" class="form-control" id="education-date-to-input-0"></input>
+													</div>
+
+												</div>
+
+												<label for="education-detail-input-0" class="form-label">Mô
+													tả</label>
+												<textarea type="text" class="form-control" id="education-detail-input-0"
+													style="height: 100px;"></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="headingFour">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+										data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+										Kinh nghiệm làm việc
+									</button>
+								</h2>
+								<div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+									data-bs-parent="#accordionExample">
+									<div class="accordion-body">
+										<!-- Work Experience form content -->
+										<div class="mb-3">
+											<h4>Kinh nghiệm làm việc <button id="addExperience" class="btn"><i class="bi bi-plus-circle-fill"
+														style="color:#00b074; font-size: larger;"></i></button></h4>
+											<div id="experience-0" class="mb-3"
+												style="border: 0.5px solid lightslategrey; display: none; padding:5px; border-radius: 5px;">
+												<label for="experience-title-input-0" class="form-label">Vị
+													trí</label>
+												<input type="text" class="form-control" id="experience-title-input-0"></input>
+
+												<label for="experience-name-input-0" class="form-label">Tên công
+													ty</label>
+												<input type="text" class="form-control" id="experience-name-input-0"></input>
+
+
+												<div class="row">
+													<div class="col-md-6">
+														<label for="experience-date-from-input-0" class="form-label">Từ</label>
+														<input type="month" class="form-control" id="experience-date-from-input-0"></input>
+													</div>
+
+													<div class="col-md-6"><label for="experience-date-to-input-0" class="form-label">Đến</label>
+														<input type="month" class="form-control" id="experience-date-to-input-0"></input>
+													</div>
+												</div>
+
+												<label for="experience-detail-input-0" class="form-label">Mô
+													tả</label>
+												<textarea type="text" class="form-control" id="experience-detail-input-0"
+													style="height: 100px;"></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="headingFive">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+										data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+										Dự án
+									</button>
+								</h2>
+								<div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+									data-bs-parent="#accordionExample">
+									<div class="accordion-body">
+										<!-- Project form content -->
+										<div class="mb-3">
+											<h4>Dự án <button id="addProject" class="btn"><i class="bi bi-plus-circle-fill"
+														style="color:#00b074; font-size: larger;"></i></button></h4>
+											<div id="project-0" class="mb-3"
+												style="border: 0.5px solid lightslategrey; display: none; padding:5px; border-radius: 5px;">
+
+												<label for="project-name-input-0" class="form-label">Tên dự
+													án</label>
+												<input type="text" class="form-control" id="project-name-input-0"></input>
+
+
+												<div class="row">
+													<div class="col-md-6">
+														<label for="project-date-from-input-0" class="form-label">Từ</label>
+														<input type="month" class="form-control" id="project-date-from-input-0"></input>
+													</div>
+
+													<div class="col-md-6"><label for="project-date-to-input-0" class="form-label">Đến</label>
+														<input type="month" class="form-control" id="project-date-to-input-0"></input>
+													</div>
+
+												</div>
+
+												<label for="project-detail-input-0" class="form-label">Mô tả</label>
+
+												<textarea type="text" class="form-control" id="project-detail-input-0"
+													style="height: 100px;"></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary">Save changes</button> -->
+					</div>
+				</div>
+			</div>
+		</div>
+</body>
+<script src="/user/resume-asset/js/main.js"></script>
+<script src="/user/resume-asset/js/html2pdf.bundle.min.js"></script>
+<script src="/user/resume-asset/js/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/user/lib/owlcarousel/owl.carousel.min.js"></script>
+
+</html>

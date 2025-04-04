@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>JobEntry - Job Portal Website Template</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta sec:authorize="isAuthenticated()" name="_csrf" th:content="${_csrf.token}" />
+  <meta sec:authorize="isAuthenticated()" name="_csrf_header" th:content="${_csrf.headerName}" />
+  <!-- Favicon -->
+  <link href="/user/img/favicon.ico" rel="icon">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Icon Font Stylesheet-->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Libraries Stylesheet -->
+  <link href="/user/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="/user/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Template Stylesheet -->
+  <link href="/user/css/style.css" rel="stylesheet">
+
+  <!-- Toastr library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+    integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Select2 CSS-->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="container-xxl bg-white p-0">
+    <!-- Spinner Start -->
+    <div id="spinner"
+      class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Navbar Start -->
+    <div th:replace="~{layout/navbar-seeker :: navbar}"></div>
+    <!-- Navbar End -->
+
+
+    <!-- Header End -->
+    <div class="container-xxl py-5 bg-dark page-header">
+      <div class="container my-5 pt-5 pb-4">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">Tìm kiếm việc làm</h1>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb text-uppercase">
+            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+            <li class="breadcrumb-item text-white active" aria-current="page">Việc làm IT</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <!-- Header End -->
+
+    <!-- Search Start -->
+    <div class="container-fluid bg-primary p-3">
+      <div class="container">
+        <form th:action="@{/jobs}" method="get" th:object="${jobCriteria}">
+          <div class="row g-2">
+            <div class="col-md-8">
+              <select id="skills" name="skills" class="form-select" multiple="multiple" th:field="*{requiredSkills}">
+                <option th:each="skill : ${skills}" th:value="${skill.id}" th:text="${skill.name}">
+                </option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-dark border-0 w-100">Tìm kiếm</button>
+            </div>
+            <div class="col-md-2">
+              <a href="/jobs" class="btn btn-secondary border-0 w-100">Xóa bộ lọc</a>
+            </div>
+          </div>
+          <div class="row g-2 mt-3">
+            <div class="col-md-3">
+              <select th:field="*{mixedSkill}" class="form-select" id="mixedSkill" name="mixedSkill">
+                <option value="false">Chỉ gồm một trong các kĩ năng</option>
+                <option value="true">Bao gồm tất cả các kĩ năng</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select th:field="*{provinceCode}" class="form-select border-0">
+                <option value=0>Tất cả các thành phố</option>
+                <option value=1>Hà Nội</option>
+                <option value=32>Đà Nẵng</option>
+                <option value=50>Hồ Chí Minh</option>
+                <option value=-1>Khác</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select id="levels" name="levels" class="form-select" multiple="multiple" th:field="*{levels}">
+                <option th:each="level : ${levels}" th:value="${level.id}" th:text="${level.name}">
+                </option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select th:field="*{workingModels}" id="working-model" multiple="multiple" class="form-select border-0">
+                <option value="At office">Tại văn phòng</option>
+                <option value="Remote">Làm từ xa</option>
+                <option value="Hybrid">Linh hoạt</option>
+              </select>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Search End -->
+
+
+    <div class="container-xxl py-5">
+      <div class="container">
+        <div th:if="${#lists.isEmpty(jobs)}" class="d-flex flex-column align-items-center justify-content-center">
+          <i class="fas fa-search fa-5x text-muted mb-3"></i>
+          <h4>Không tìm thấy kết quả nào, vui lòng thử lại</h4>
+        </div>
+        <div th:if="${!#lists.isEmpty(jobs)}" class="row gy-5 gx-4">
+
+          <!-- Coding here -->
+          <div class="col-md-4">
+            <th:block th:each="job, stat : ${jobs}">
+              <div class="card job-card mb-3 shadow-sm" th:attr="data-job-id=${job.id}"
+                th:classappend="${stat.index == 0} ? 'selected'">
+                <div class="card-body p-4">
+                  <!-- Job Title -->
+                  <h6 class="card-title mb-3" th:text="${job.title}"></h6>
+                  <!-- Company Info with logo -->
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="image-container-small text-center">
+                      <img th:src="@{/company-logo/{logo}(logo=${job.company.logo})}" alt="Company Logo"
+                        class="img-fluid rounded-circle">
+                    </div>
+                    <span class="mb-0 ms-2"><strong th:text="${job.company.name}"></strong></span>
+                  </div>
+
+                  <!-- Salary and Location -->
+                  <div class="d-flex flex-column">
+                    <!-- Salary Section -->
+                    <div class="text-truncate mb-2">
+                      <i class="far fa-money-bill-alt text-primary me-2"></i>
+                      <span sec:authorize="isAuthenticated()" th:text="${job.salary}"></span>
+                      <span sec:authorize="isAnonymous()">
+                        <a href="/login" class="text-primary">Đăng nhập để xem mức lương</a>
+                      </span>
+                    </div>
+
+                    <!-- Available Branches -->
+                    <div th:each="branch : ${job.availableBranches}" class="text-truncate mb-2">
+                      <i class="fa fa-map-marker-alt text-primary me-2"></i>
+                      <span th:text="${branch.province.name}"></span>
+                    </div>
+
+                    <!-- Working Model -->
+                    <div class="text-truncate">
+                      <i class="fa fa-briefcase text-primary me-2"></i>
+                      <span th:text="${job.workingModel}"></span>
+                    </div>
+                  </div>
+
+                  <hr class="my-3" />
+
+                  <!-- Skills Badges -->
+                  <div class="d-flex flex-wrap gap-2">
+                    <th:block th:each="skill : ${job.skills}">
+                      <span th:attr="data-skill-id=${skill.id}"
+                        class="skill-tag badge bg-light text-dark rounded-pill px-3 py-2"
+                        th:text="${skill.name}"></span>
+                    </th:block>
+                  </div>
+                </div>
+              </div>
+            </th:block>
+          </div>
+          <div class="col-md-8">
+            <!-- Job content start here -->
+            <div class="sticky-content">
+              <div class="mb-3">
+                <div id="section-1" class="d-flex mb-3">
+                  <div class="image-container">
+                    <img th:src="@{/company-logo/{logo}(logo=${job.company.logo})}" alt="Company Logo"
+                      class="img-fluid rounded-circle">
+                  </div>
+                  <div class="text-start ps-4">
+                    <h4 th:text="${job.title}"></h4>
+                    <p class="text-truncate me-3 mb-3" th:text="${job.company.name}">
+                    </p>
+                    <p class="text-truncate me-3" style="font-size: 1.25rem; font-weight: bold;">
+                      <i class="far fa-money-bill-alt text-primary me-2"></i>
+                      <span sec:authorize="isAuthenticated()" th:text="${job.salary}"></span>
+                      <a href="/login" sec:authorize="isAnonymous()">Đăng nhập để xem mức lương</a>
+                    </p>
+                  </div>
+                  <div class="text-start ps-4">
+                    <a th:href="@{/jobs/{id}(id=${job.id})}" target="_blank">
+                      <i class="fa fa-external-link-alt text-primary"></i>
+                    </a>
+                  </div>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_Seeker')" id="section-2" class="d-flex mb-3">
+                  <th:block th:if="${applied == null}">
+                    <a th:href="@{/jobs/{id}/apply(id=${job.id})}" class="btn btn-primary flex-grow-1 me-2">Ứng
+                      tuyển</a>
+                    <a class="btn btn-light" id="handle-add-delete-favorite-job" th:attr="data-job-id=${job.id}">
+                      <i th:if="${liked == null}" class="far fa-heart text-primary"></i>
+                      <i th:if="${liked != null}" class="fa fa-heart text-primary"></i>
+                    </a>
+                  </th:block>
+
+                  <th:block th:if="${applied != null}">
+                    <div class="alert alert-success flex-grow-1 me-2" role="alert">
+                      Bạn đã ứng tuyển công việc này. Bạn có thể ứng tuyển lại sau 7 ngày. <br />
+                      Xem các công việc đã ứng tuyển
+                      <a href="/cv-status" class="alert-link"><u>Tại đây</u></a>.
+                    </div>
+                  </th:block>
+                </div>
+
+                <div id="section-2" sec:authorize="isAnonymous()" class="d-flex mb-3">
+                  <a href="/login" class="btn btn-primary flex-grow-1 me-2">Ứng tuyển</a>
+                  <a href="/login" class="btn btn-light">
+                    <i class="far fa-heart text-primary"></i>
+                  </a>
+                </div>
+
+                <hr />
+              </div>
+
+
+              <div class="preview-job-content">
+
+                <div class="mb-3" id="section-3">
+                  <p th:each="branch : ${job.availableBranches}" class="text-truncate me-3">
+                    <i class="fa fa-map-marker-alt text-primary me-2"></i>
+                    <span th:text="${branch.address}"></span>
+                    <a href="#" class="search-address">
+                      <i class="fa fa-external-link-alt text-primary"></i>
+                    </a>
+                  </p>
+                  <p class="text-truncate me-3"><i class="fa fa-briefcase text-primary me-2"></i>
+                    <span th:text="${job.workingModel}"></span>
+                  </p>
+
+                  <p class="text-truncate me-3"><i class="far fa-clock text-primary me-2"></i>
+                    Cập nhật <span th:text="${daysAgo}"></span> ngày trước
+                  </p>
+                  <div class="d-flex flex-wrap gap-2 mt-3">
+                    Kỹ năng:
+                    <!-- Tăng gap -->
+                    <th:block th:each="skill : ${job.skills}">
+                      <span th:attr="data-skill-id=${skill.id}"
+                        class="skill-tag badge bg-light text-dark rounded-pill px-3 py-2"
+                        th:text="${skill.name}"></span>
+                    </th:block>
+                  </div>
+                </div>
+                <hr />
+
+                <div id="section-4" class="mb-3">
+                  <p th:utext="${job.description}"></p>
+                </div>
+                <hr />
+
+                <div id="section-5" class="mb-3">
+                  <h5 th:text="${job.company.name}"></h5>
+                  <div class="row">
+                    <!-- Column 1 -->
+                    <div class="col-md-4 info-item">
+                      <span class="label">Mô hình công ty</span>
+                      <span class="value" th:text="${job.company.type}"></span>
+                    </div>
+                    <!-- Column 2 -->
+                    <div class="col-md-4 info-item">
+                      <span class="label">Lĩnh vực</span>
+                      <span class="value" th:text="${job.company.industry}"></span>
+                    </div>
+                    <!-- Column 3 -->
+                    <div class="col-md-4 info-item">
+                      <span class="label">Quốc gia</span>
+                      <span class="value" th:text="${job.company.country}">
+                      </span>
+                    </div>
+                    <!-- Column 4 -->
+                    <div class="col-md-4 info-item mt-3">
+                      <span class="label">Quy mô</span>
+                      <span class="value" th:text="${job.company.size}"></span>
+                    </div>
+                    <!-- Column 5 -->
+                    <div class="col-md-4 info-item mt-3">
+                      <span class="label">Ngày làm việc</span>
+                      <span class="value">Thứ 2 - Thứ 6</span>
+                    </div>
+                    <!-- Column 6 -->
+                    <div class="col-md-4 info-item mt-3">
+                      <span class="label">Chính sách làm thêm giờ</span>
+                      <span class="value" th:text="${job.company.otPolicy}"></span>
+                    </div>
+                  </div>
+                </div> <!-- Company info end here -->
+
+              </div>
+            </div> <!-- Job content end here -->
+
+          </div>
+
+        </div>
+
+        <nav th:if="${!#lists.isEmpty(jobs)}" aria-label="Page navigation">
+          <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+              <a th:href="@{'/jobs?' + 'page=' + ${currentPage-1} + '&' + ${queryString}}" class="page-link">Trước</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+              th:classappend="${i == currentPage} ? 'active'">
+              <a class="page-link" th:href="@{'/jobs?' + 'page=' + ${i} + '&' + ${queryString}}" th:text="${i}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+              <a class="page-link" th:href="@{'/jobs?' + 'page=' + ${currentPage+1} + '&' + ${queryString}}">Tiếp</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Footer Start -->
+    <div th:replace="~{layout/footer-seeker :: footer}"></div>
+    <!-- Footer End -->
+
+  </div>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+    integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Template Javascript -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="/user/js/main.js"></script>
+  <script src="/user/js/job-fetching.js"></script>
+  <script src="/user/js/toggle-favorite-job.js"></script>
+</body>
+
+</html>

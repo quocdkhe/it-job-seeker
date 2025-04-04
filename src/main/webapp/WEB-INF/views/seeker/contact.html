@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Thông tin liên lạc của IT Job Seeker</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="/user/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/user/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="/user/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/user/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/user/css/style.css" rel="stylesheet">
+    <style>
+        p {
+            font-size: larger;
+        }
+
+        .contact-info {
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .map-responsive iframe {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- Navbar Start -->
+        <div th:replace="~{layout/navbar-seeker :: navbar}"></div>
+        <!-- Navbar End -->
+
+        <div class="container-xxl py-5 bg-dark page-header">
+            <div class="container my-5 pt-5 pb-4">
+                <h1 class="display-3 text-white mb-3 animated slideInDown">Thông tin liên hệ</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb text-uppercase">
+                        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Liên hệ</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Content Start -->
+
+        <div class="container-xxl py-5">
+            <div class="container lh-base">
+
+                <div class="text-center mb-5">
+                    <h2>Thông tin liên hệ</h2>
+                </div>
+                <div class="row">
+                    <!-- Thông tin liên hệ -->
+                    <div class="col-md-6">
+                        <div class="contact-info p-4">
+                            <h3>Địa chỉ văn phòng</h3>
+                            <p><i class="fa fa-map-marker-alt me-2"></i>72 La Duong, Ha Dong, Ha Noi, Vietnam</p>
+                            <p><i class="fa fa-user me-2"></i> Anh Lê Xuân Hoàng Nam</p>
+                            <p><i class="fa fa-phone me-2"></i> +84 968 233 561</p>
+                            <p><i class="fa fa-envelope me-2"></i> jobseeker19886@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <!-- Bản đồ -->
+                    <div class="col-md-6">
+                        <div class="map-responsive">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.902214745682!2d105.74962631533296!3d21.03576179292164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3134534b8a1d8b9d%3A0x2b1b1b1b1b1b1b1b!2s72%20La%20Duong%2C%20Ha%20Dong%2C%20Ha%20Noi%2C%20Vietnam!5e0!3m2!1sen!2s!4v1634567890123!5m2!1sen!2s"
+                                allowfullscreen loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Content End -->
+
+
+
+        <!-- Footer Start -->
+        <div th:replace="~{layout/footer-seeker :: footer}"></div>
+        <!-- Footer End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/user/lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="/user/js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Admin-Manage Account</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/manager/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/manager/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastr library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+        integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Template Stylesheet -->
+    <link href="/manager/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-fluid position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div th:replace="~{layout/spinner-recruiter :: spinner-recruiter}"></div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div th:replace="~{layout/sidebar-admin :: sidebar-admin}"></div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <div th:replace="~{layout/navbar-recruiter :: navbar-recruiter}"></div>
+            <!-- Navbar End -->
+
+            <div class="container-fluid pt-4 px-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/feedback">Phản hồi</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Các phản hồi</li>
+                    </ol>
+                </nav>
+
+                <!-- Khung chứa danh sách phản hồi -->
+                <div class="bg-light rounded h-100 p-4">
+                    <h3 class="mb-4">Danh sách phản hồi sản phẩm</h3>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">STT</th>
+                                    <th scope="col">Người dùng</th>
+                                    <th scope="col">Chủ đề</th>
+                                    <th scope="col">Mô tả</th>
+                                    <th scope="col">Đánh giá</th>
+                                    <th scope="col">Trạng thái</th>
+                                    <th scope="col">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="feedback, iterStat : ${feedbackList}"
+                                    th:classappend="${feedback.isChecked} ? '' : 'table-warning'">
+                                    <td th:text="${iterStat.index + 1}"></td>
+                                    <td th:text="${feedback.user.username}"></td>
+                                    <td>
+                                        <th:block th:each="topic : ${feedback.topics}">
+                                            <span th:text="${topic.name}"></span><br />
+                                        </th:block>
+                                    </td>
+                                    <td th:text="${feedback.description}" class="text-start"></td>
+                                    <td>
+                                        <span class="badge" th:classappend="${feedback.rating == 'Rất tệ' ? 'bg-danger' :
+                                                       feedback.rating == 'Tệ' ? 'bg-warning text-dark' :
+                                                       feedback.rating == 'Bình thường' ? 'bg-secondary' :
+                                                       feedback.rating == 'Tốt' ? 'bg-info' :
+                                                       feedback.rating == 'Tuyệt vời' ? 'bg-success' : ''}">
+                                            <span th:if="${feedback.rating == 'Rất tệ'}">😡 Rất tệ</span>
+                                            <span th:if="${feedback.rating == 'Tệ'}">😞 Tệ</span>
+                                            <span th:if="${feedback.rating == 'Bình thường'}">😐 Bình thường</span>
+                                            <span th:if="${feedback.rating == 'Tốt'}">😊 Tốt</span>
+                                            <span th:if="${feedback.rating == 'Tuyệt vời'}">😍 Tuyệt vời</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${feedback.isChecked}" class="badge bg-success">✅ Đã đọc</span>
+                                        <span th:unless="${feedback.isChecked}" class="badge bg-warning text-dark">⏳
+                                            Chưa đọc</span>
+                                    </td>
+                                    <td>
+                                        <form th:action="@{/admin/mark-feedback-read}" method="post"
+                                            style="display:inline;">
+                                            <input type="hidden" name="id" th:value="${feedback.id}">
+                                            <button type="submit" class="btn btn-sm btn-outline-success"
+                                                th:disabled="${feedback.isChecked}">
+                                                <i class="fas fa-check"></i> Đánh dấu đã đọc
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <nav aria-label="Pagination navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/feedback-product(page=${currentPage-1})}"
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                    th:classappend="${currentPage == i} ? 'active'">
+                                    <a class="page-link" th:href="@{/admin/feedback-product(page=${i})}"
+                                        th:text="${i}"></a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/feedback-product(page=${currentPage+1})}"
+                                        aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Kết thúc phần chính -->
+
+
+            <!-- Footer Start -->
+            <div th:replace="~{layout/footer-recruiter :: footer-recruiter}"></div>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+        integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Template Javascript -->
+    <script src="/manager/js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Admin-Manage Account</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/manager/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/manager/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/manager/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/manager/css/style.css" rel="stylesheet">
+    <!-- Load the Google Maps API -->
+    <script async defer
+        th:src="'https://maps.gomaps.pro/maps/api/js?key=' + ${MAPS_API_KEY} + '&libraries=places&callback=initMap'"></script>
+
+</head>
+
+<body>
+    <div class="container-fluid position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div th:replace="~{layout/spinner-recruiter :: spinner-recruiter}"></div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div th:replace="~{layout/sidebar-recruiter:: sidebar-recruiter}"></div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <div th:replace="~{layout/navbar-recruiter :: navbar-recruiter}"></div>
+            <!-- Navbar End -->
+
+
+            <!-- Mở đầu phần chính -->
+            <div class="container-fluid pt-4 px-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/recruiter/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/recruiter/manage-branch}">Quản lí chi nhánh</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Thêm chi nhánh</li>
+                    </ol>
+                </nav>
+                <!-- Viết code vào đây -->
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4">Thêm Chi Nhánh</h6>
+                    <div class="table">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!--form to add new branch-->
+                                <form th:action="@{/recruiter/manage-branch/add}" method="post" th:object="${branch}"
+                                    onsubmit="return validateAddress();">
+                                    <div class="bg-light rounded h-100 p-4">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="province">Tỉnh</label>
+                                            <select id="province" class="form-control" th:field="*{province}"
+                                                onchange="loadDistricts(this.value); updateAddress();">
+                                                <option value="">Chọn tỉnh</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="district">Huyện</label>
+                                            <select id="district" class="form-control" th:field="*{district}"
+                                                onchange="loadWards(this.value); updateAddress();">
+                                                <option value="">Chọn huyện</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="ward">Xã</label>
+                                            <select id="ward" class="form-control" th:field="*{ward}"
+                                                onchange="updateAddress();">
+                                                <option value="">Chọn xã</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="address">Địa chỉ</label>
+                                            <input type="text" id="address" class="form-control" th:field="*{address}"
+                                                required readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="autocomplete">Tên đường, số nhà</label>
+                                            <input type="text" id="autocomplete" class="form-control" name="detail"
+                                                placeholder="Nhập địa chỉ tìm kiếm..." required>
+                                            <span id="address-error" class="text-danger" style="display: none;">Địa chỉ
+                                                không nằm trong tỉnh/thành phố đã chọn</span>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Lưu</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="map" style="height: 450px;"></div>
+                                <p id="addressText" style="display: none;">Chọn vị trí trên bản đồ để lấy địa chỉ...</p>
+                                <script>
+                                    let map;
+                                    let marker;
+
+                                    function initMap() {
+                                        map = new google.maps.Map(document.getElementById("map"), {
+                                            center: { lat: 21.0285, lng: 105.8542 }, // Hà Nội mặc định
+                                            zoom: 13,
+                                        });
+
+                                        marker = new google.maps.Marker({
+                                            position: { lat: 21.0285, lng: 105.8542 },
+                                            map,
+                                            draggable: true, // Cho phép kéo marker
+                                        });
+
+                                        const input = document.getElementById("autocomplete");
+                                        const autocomplete = new google.maps.places.Autocomplete(input);
+                                        autocomplete.bindTo("bounds", map);
+
+                                        autocomplete.addListener("place_changed", () => {
+                                            const place = autocomplete.getPlace();
+                                            if (!place.geometry || !place.geometry.location) return;
+                                            map.setCenter(place.geometry.location);
+                                            marker.setPosition(place.geometry.location);
+                                            updateAddressByCoords(place.geometry.location);
+                                        });
+
+                                        marker.addListener("dragend", () => {
+                                            const pos = marker.getPosition();
+                                            updateAddressByCoords(pos);
+                                        });
+                                    }
+
+                                    function updateAddressByCoords(location) {
+                                        let geocoder = new google.maps.Geocoder();
+                                        geocoder.geocode({ location: location }, function (results, status) {
+                                            if (status === "OK" && results[0]) {
+                                                let address = results[0].formatted_address;
+
+                                                // Loại bỏ Plus Code (chuỗi có ký tự "+" ở đầu)
+                                                let addressParts = address.split(",");
+                                                if (addressParts[0].match(/\+/)) {
+                                                    addressParts.shift(); // Xóa phần tử đầu tiên nếu chứa "+"
+                                                }
+
+                                                let cleanedAddress = addressParts.join(",").trim();
+                                                document.getElementById("address").value = cleanedAddress;
+                                            } else {
+                                                console.log("Không thể lấy địa chỉ:", status);
+                                            }
+                                        });
+                                    }
+
+                                    function updateMapLocation() {
+                                        let province = document.getElementById("province").options[document.getElementById("province").selectedIndex].text;
+                                        let district = document.getElementById("district").options[document.getElementById("district").selectedIndex].text;
+                                        let ward = document.getElementById("ward").options[document.getElementById("ward").selectedIndex].text;
+
+                                        let fullAddress = "";
+                                        if (ward && ward !== "--Chọn phường/xã--") fullAddress += ward + ", ";
+                                        if (district && district !== "--Chọn quận/huyện--") fullAddress += district + ", ";
+                                        if (province && province !== "Chọn tỉnh") fullAddress += province;
+
+                                        if (fullAddress.trim() !== "") {
+                                            let geocoder = new google.maps.Geocoder();
+                                            geocoder.geocode({ address: fullAddress }, function (results, status) {
+                                                if (status === "OK") {
+                                                    let location = results[0].geometry.location;
+                                                    map.setCenter(location);
+                                                    marker.setPosition(location);
+                                                } else {
+                                                    console.log("Không thể tìm thấy vị trí:", status);
+                                                }
+                                            });
+                                        }
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Kết thúc phần chính -->
+
+                <!-- Footer Start -->
+                <div th:replace="~{layout/footer-recruiter :: footer-recruiter}"></div>
+                <!-- Footer End -->
+            </div>
+            <!-- Content End -->
+
+
+            <!-- Back to Top -->
+            <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        </div>
+
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Template Javascript -->
+        <script src="/manager/js/main.js"></script>
+        <script src="/manager/js/add-branch.js"></script>
+        <!--Script for modal-->
+
+</body>
+
+</html>

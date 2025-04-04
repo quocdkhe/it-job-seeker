@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>JobEntry - Job Portal Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta sec:authorize="isAuthenticated()" name="_csrf" th:content="${_csrf.token}" />
+    <meta sec:authorize="isAuthenticated()" name="_csrf_header" th:content="${_csrf.headerName}" />
+
+
+    <!-- Favicon -->
+    <link href="/user/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/user/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/user/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/user/css/style.css" rel="stylesheet">
+    <link href="/user/css/company-review.css" rel="stylesheet">
+    <!-- Toastr library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
+        integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Lightbox stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Navbar Start -->
+        <div th:replace="~{layout/navbar-seeker :: navbar}"></div>
+        <!-- Navbar End -->
+
+
+        <!-- Header End -->
+        <div class="container-xxl py-5 bg-dark page-header mb-5">
+            <div class="container my-5 pt-5 pb-4">
+                <h1 class="display-3 text-white mb-3 animated slideInDown" th:text="${company.name}"></h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb text-uppercase">
+                        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a href="/companies">Công ty IT</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page" th:text="${company.name}">
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <!-- Header End -->
+
+
+        <!-- Job Detail Start -->
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div class="row gy-5 gx-4">
+                    <div class="col-lg-8">
+                        <div class="d-flex align-items-center mb-5">
+                            <div class="image-container">
+                                <img th:src="@{/company-logo/{logo}(logo=${company.logo})}" alt="Company logo" />
+                            </div>
+                            <div class="text-start ps-4">
+                                <h3 class="mb-3" th:text="${company.name}"></h3>
+                                <span class="text-truncate me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>
+                                    <span th:text="${cities}"></span>
+                                </span>
+                                <div class="d-flex mt-3">
+                                    <div sec:authorize="hasRole('ROLE_Seeker')" class="d-flex mt-3">
+                                        <a th:href="@{/review/write-review/{id}(id=${company.id})}"
+                                            class="btn btn-primary me-2">Viết đánh giá</a>
+                                        <a class="btn btn-light" id="toggle-follow-company" th:if="${following == null}"
+                                            th:attr="data-company-id=${company.id}, data-user-id=${session.userId}">
+                                            Theo dõi
+                                        </a>
+                                        <a class="btn btn-light" id="toggle-follow-company" th:if="${following != null}"
+                                            th:attr="data-company-id=${company.id}, data-user-id=${session.userId}">
+                                            <i class="fa fa-check me-2"></i>Đang theo dõi
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="custom-tabs">
+                                <a th:href="@{/companies/{id}(id=${company.id})}" class="nav-link">Tổng quan</a>
+                                <a href="@{/companies/review/{id}(id=${company.id})}" class="nav-link active">
+                                    Các đánh giá
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 card card-review">
+                            <h3 class="text-center">Đánh Giá Tổng Quan</h3>
+                            <hr class="my-4" />
+                            <div class="row">
+                                <!-- Trung bình số sao -->
+                                <div class="col-md-3 text-center">
+                                    <h1 id="average-rating" class="display-4">0.0</h1>
+                                    <div id="star-container" class="star-rating" style="font-size: 20px;"></div>
+                                    <p id="total-reviews">0 đánh giá</p>
+                                </div>
+
+                                <!-- Thống kê số sao -->
+                                <div class="col-md-6">
+                                    <div id="rating-breakdown"></div>
+                                </div>
+
+                                <!-- Vòng tròn phần trăm -->
+                                <div class="col-md-3 text-center">
+                                    <div class="circle-container">
+                                        <div id="circle" class="circle">0%</div>
+                                    </div>
+                                    <p>Đề xuất làm việc ở đây với bạn bè</p>
+                                </div>
+                            </div>
+                            <hr class="my-4" />
+                            <div class="rating-container">
+                                <!-- Danh sách đánh giá -->
+                                <div class="col-md-6">
+                                    <div class="rating-list" id="rating-list"></div>
+                                </div>
+
+                                <!-- Chi tiết đánh giá -->
+                                <div class="col-md-6 rating-detail">
+                                    <h5><strong>Đánh giá chi tiết</strong></h5>
+                                    <div id="rating-details-content"></div>
+                                </div>
+                            </div>
+
+                            <div class="show-more-btn" style="display: block;">Show more <i
+                                    class="fas fa-chevron-down"></i></div>
+                            <div class="show-less-btn" style="display: none;">Show less <i
+                                    class="fas fa-chevron-up"></i></div>
+                            <div id="CompanyId" th:text="${company.id}" style="display: none;"></div>
+                        </div>
+                        <!--display your review-->
+                        <div sec:authorize="hasRole('ROLE_Seeker')">
+                            <div class="mb-5 card card-review d-flex text-center" th:if="${yourReview == null}">
+                                <h4>Bạn chưa có đánh giá nào, đánh giá <a
+                                        th:href="@{/review/write-review/{id}(id=${company.id})}">ở đây</a></h4>
+                            </div>
+                        </div>
+                        <div class="mb-5 card card-review" th:if="${yourReview != null}">
+                            <h3 class="text-center border-bottom pb-2">Đánh Giá Của Bạn</h3>
+                            <div class="review-item">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p>
+                                        <span th:text="${#temporals.format(yourReview.createdAt, 'dd/MM/yyyy')}"
+                                            style="color: gray;"></span>
+                                    </p>
+                                    <div class="dropdown">
+                                        <button class="btn options-btn" type="button">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="dropdown-list">
+                                            <a class="dropdown-item"
+                                                th:href="@{/companies/edit-review/{reviewId}(reviewId=${yourReview.id})}">Sửa</a>
+                                            <a class="dropdown-item"
+                                                th:href="@{/companies/delete-review/{reviewId}(reviewId=${yourReview.id})}">Xóa</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="review-content border-bottom pb-3 mb-4">
+                                    <h4 th:text="${yourReview.header}"></h4>
+                                    <div id="overallRating" class="overallRating" th:text="${yourReview.overallRating}"
+                                        hidden>
+                                    </div>
+                                    <div class="d-flex align-items-center dropdown-container">
+                                        <div class="starReview"></div>
+                                        <div th:text="${yourReview.overallRating}" class="overallRatingDisplayed"></div>
+                                        <button class="btn toggle-dropdown">
+                                            <i class="fas fa-chevron-down chevron-icon"></i>
+                                        </button>
+                                        <div class="review-dropdown">
+                                            <div class="review-detail row border-bottom pb-2">
+                                                <div class="col-md-6">Thu nhập </div>
+                                                <div class="stars col-md-6"
+                                                    th:attr="data-rating=${yourReview.salaryRating}"></div>
+                                            </div>
+                                            <div class="review-detail row border-bottom pb-2">
+                                                <div class="col-md-6">Cấp trên </div>
+                                                <div class="stars col-md-6"
+                                                    th:attr="data-rating=${yourReview.managerRating}"></div>
+                                            </div>
+                                            <div class="review-detail row border-bottom pb-2">
+                                                <div class="col-md-6">Làm việc nhóm </div>
+                                                <div class="stars col-md-6"
+                                                    th:attr="data-rating=${yourReview.teamworkRating}"></div>
+                                            </div>
+                                            <div class="review-detail row border-bottom pb-2">
+                                                <div class="col-md-6">Văn hóa công ty </div>
+                                                <div class="stars col-md-6"
+                                                    th:attr="data-rating=${yourReview.cultureRating}"></div>
+                                            </div>
+                                            <div class="review-detail row">
+                                                <div class="col-md-6">Môi trường làm việc </div>
+                                                <div class="stars col-md-6"
+                                                    th:attr="data-rating=${yourReview.environmentRating}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="font-weight: bold;" class="mt-3">Yêu Thích:</div>
+                                    <div th:text="${yourReview.workingReason}"></div>
+                                    <div style="font-weight: bold;" class="mt-3">Chính sách làm thêm:</div>
+                                    <div th:text="${yourReview.overtimeReason}"></div>
+                                    <div style="font-weight: bold;" class="mt-3">Đề xuất cải thiện:</div>
+                                    <div th:text="${yourReview.improvement}"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--display all reviews-->
+                        <div class="mb-5 card card-review text-center" th:if="${reviews.size() == 0}">
+                            <h4>Chưa có đánh giá nào</h4>
+                        </div>
+                        <div class="mb-3 text-center" th:if="${reviews.size() > 0}">
+                            <h3 class="pb-2">Tất Cả Đánh Giá</h3>
+                        </div>
+                        <div class="mb-5 card card-review" th:style="${reviews.size() == 0} ? 'display: none;' : 'display: block;'">
+                            <div th:each="review : ${reviews}">
+                                <div class="review-item">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p>
+                                            <span th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}"
+                                                style="color: gray;"></span>
+                                        </p>
+                                        <div class="dropdown">
+                                            <button class="btn options-btn" type="button">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                            <div class="dropdown-list" sec:authorize="hasRole('ROLE_Recruiter')">
+                                                <a class="dropdown-item" th:if="${session.userId == review.user.id}"
+                                                    th:href="@{/companies/delete-review/{reviewId}(reviewId=${review.id})}">Xóa</a>
+                                                <a class="dropdown-item" th:if="${session.userId == review.user.id}"
+                                                    th:href="@{companies/edit-review/{reviewId}(reviewId=${review.id})}">Sửa</a>
+                                                <a class="dropdown-item" th:if="${session.userId != review.user.id}"
+                                                    href="#" data-bs-toggle="modal"
+                                                    th:data-bs-target="'#reportModal-' + ${review.id}">
+                                                    Báo cáo
+                                                </a>
+                                            </div>
+                                            <div class="dropdown-list" sec:authorize="hasRole('ROLE_Seeker')">
+                                                <a class="dropdown-item" th:if="${session.userId == review.user.id}"
+                                                    th:href="@{/companies/delete-review/{reviewId}(reviewId=${review.id})}">Xóa</a>
+                                                <a class="dropdown-item" th:if="${session.userId == review.user.id}"
+                                                    th:href="@{/companies/edit-review/{reviewId}(reviewId=${review.id})}">Sửa</a>
+                                                <a class="dropdown-item" th:if="${session.userId != review.user.id}"
+                                                    href="#" data-bs-toggle="modal"
+                                                    th:data-bs-target="'#reportModal-' + ${review.id}">
+                                                    Báo cáo
+                                                </a>
+                                            </div>
+                                            <div class="dropdown-list" sec:authorize="hasRole('ROLE_Admin')">
+                                                <a class="dropdown-item"
+                                                    th:href="@{/companies/delete-review/{reviewId}(reviewId=${review.id})}">Xóa</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="review-content border-bottom pb-3 mb-4">
+                                        <h4 th:text="${review.header}"></h4>
+                                        <div id="overallRating" class="overallRating" th:text="${review.overallRating}"
+                                            hidden>
+                                        </div>
+                                        <div class="d-flex align-items-center dropdown-container">
+                                            <div class="starReview"></div>
+                                            <div th:text="${review.overallRating}" class="overallRatingDisplayed"></div>
+                                            <button class="btn toggle-dropdown">
+                                                <i class="fas fa-chevron-down chevron-icon"></i>
+                                            </button>
+                                            <!-- Dropdown hiển thị khi hover -->
+                                            <div class="review-dropdown">
+                                                <div class="review-detail row border-bottom pb-2">
+                                                    <div class="col-md-6">Thu nhập </div>
+                                                    <div class="stars col-md-6"
+                                                        th:attr="data-rating=${review.salaryRating}"></div>
+                                                </div>
+                                                <div class="review-detail row border-bottom pb-2">
+                                                    <div class="col-md-6">Cấp trên </div>
+                                                    <div class="stars col-md-6"
+                                                        th:attr="data-rating=${review.managerRating}"></div>
+                                                </div>
+                                                <div class="review-detail row border-bottom pb-2">
+                                                    <div class="col-md-6">Làm việc nhóm </div>
+                                                    <div class="stars col-md-6"
+                                                        th:attr="data-rating=${review.teamworkRating}"></div>
+                                                </div>
+                                                <div class="review-detail row border-bottom pb-2">
+                                                    <div class="col-md-6">Văn hóa công ty </div>
+                                                    <div class="stars col-md-6"
+                                                        th:attr="data-rating=${review.cultureRating}"></div>
+                                                </div>
+                                                <div class="review-detail row">
+                                                    <div class="col-md-6">Môi trường làm việc </div>
+                                                    <div class="stars col-md-6"
+                                                        th:attr="data-rating=${review.environmentRating}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="font-weight: bold;" class="mt-3">Yêu Thích:</div>
+                                        <div th:text="${review.workingReason}"></div>
+                                        <div style="font-weight: bold;" class="mt-3">Chính sách làm thêm:</div>
+                                        <div th:text="${review.overtimeReason}"></div>
+                                        <div style="font-weight: bold;" class="mt-3">Đề xuất cải thiện:</div>
+                                        <div th:text="${review.improvement}"></div>
+                                    </div>
+                                </div>
+                                <!-- Modal báo cáo -->
+                                <div class="modal fade" th:id="'reportModal-' + ${review.id}" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Báo cáo đánh giá</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form
+                                                    th:action="@{/companies/review/report/{companyId}/{reviewId}(companyId=${company.id}, reviewId=${review.id})}"
+                                                    method="post">
+                                                    <input type="hidden" name="userId" th:value="${session.userId}" />
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="reason"
+                                                            value="OFFENSIVE_LANGUAGE"
+                                                            th:id="'offensive-' + ${review.id}" checked>
+                                                        <label class="form-check-label"
+                                                            th:for="'offensive-' + ${review.id}">
+                                                            Ngôn từ xúc phạm
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="reason"
+                                                            value="FALSE_INFORMATION"
+                                                            th:id="'false-info-' + ${review.id}">
+                                                        <label class="form-check-label"
+                                                            th:for="'false-info-' + ${review.id}">
+                                                            Thông tin sai lệch
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="reason"
+                                                            value="INAPPROPRIATE_CONTENT"
+                                                            th:id="'inappropriate-' + ${review.id}">
+                                                        <label class="form-check-label"
+                                                            th:for="'inappropriate-' + ${review.id}">
+                                                            Nội dung không phù hợp
+                                                        </label>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-danger">Gửi báo
+                                                            cáo</button>
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Hủy</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Modal báo cáo -->
+                            </div>
+                        </div>
+                        <!-- Pagination -->
+                        <nav aria-label="Pagination navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/companies/review/{id}(id=${company.id}, page=${currentPage-1})}"
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                    th:classappend="${currentPage == i} ? 'active'">
+                                    <a class="page-link"
+                                        th:href="@{/companies/review/{id}(id=${company.id}, page=${i})}"
+                                        th:text="${i}"></a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/companies/review/{id}(id=${company.id}, page=${currentPage+1})}"
+                                        aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!-- End Pagination -->
+                    </div>
+                    <!-- List of jobs: -->
+                    <div class="col-lg-4">
+                        <div class="sticky-title">
+                            <h4><span th:text="${company.jobs.size()}"></span> việc làm đang tuyển dụng
+                            </h4>
+                        </div>
+                        <div class="sticky-wrapper">
+                            <div th:each="job : ${company.jobs}">
+                                <div class="card mb-3 shadow-sm" th:attr="data-job-id=${job.id}">
+                                    <div class="card-body p-4">
+                                        <!-- Job Title -->
+                                        <h6 class="card-title mb-3 job-title">
+                                            <a th:href="@{/jobs/{id}(id=${job.id})}" th:text="${job.title}"></a>
+                                        </h6>
+                                        <!-- Company Info with logo -->
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="image-container-small text-center">
+                                                <img th:src="@{/company-logo/{logo}(logo=${company.logo})}"
+                                                    alt="Company Logo" class="img-fluid rounded-circle">
+                                            </div>
+                                            <span class="mb-0 ms-2"><strong th:text="${company.name}"></strong></span>
+                                        </div>
+
+                                        <!-- Salary and Location -->
+                                        <div class="d-flex flex-column">
+                                            <!-- Salary Section -->
+                                            <div class="text-truncate mb-2">
+                                                <i class="far fa-money-bill-alt text-primary me-2"></i>
+                                                <span sec:authorize="isAuthenticated()" th:text="${job.salary}"></span>
+                                                <span sec:authorize="isAnonymous()">
+                                                    <a href="/login" class="text-primary">Đăng nhập để xem mức lương</a>
+                                                </span>
+                                            </div>
+
+                                            <!-- Available Branches -->
+                                            <div th:each="branch : ${job.availableBranches}" class="text-truncate mb-2">
+                                                <i class="fa fa-map-marker-alt text-primary me-2"></i>
+                                                <span th:text="${branch.province.name}"></span>
+                                            </div>
+
+                                            <!-- Working Model -->
+                                            <div class="text-truncate">
+                                                <i class="fa fa-briefcase text-primary me-2"></i>
+                                                <span th:text="${job.workingModel}"></span>
+                                            </div>
+                                        </div>
+
+                                        <hr class="my-3" />
+
+                                        <!-- Skills Badges -->
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span th:each="skill : ${job.skills}"
+                                                class=" skill-tag badge bg-light text-dark rounded-pill px-3 py-2"
+                                                th:text="${skill.name}" th:attr="data-skill-id=${skill.id}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Job Detail End -->
+
+
+    <!-- Footer Start -->
+    <div th:replace="~{layout/footer-seeker :: footer}"></div>
+    <!-- Footer End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
+        integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/user/js/main.js"></script>
+    <script src="/user/js/company-review.js"></script>
+    <script>
+        $(document).ready(function () {
+            var csrfToken = $('meta[name="_csrf"]').attr('content');
+            var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+            $.ajaxSetup({
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfToken);
+                }
+            });
+
+            $(document).on('mouseenter', '#toggle-follow-company', function () {
+                if ($(this).find('i').length > 0) {
+                    $(this).html('<i class="fa fa-times me-2"></i>Hủy theo dõi');
+                }
+            });
+
+            $(document).on('mouseleave', '#toggle-follow-company', function () {
+                if ($(this).find('i').length > 0) {
+                    $(this).html('<i class="fa fa-check me-2"></i>Đang theo dõi');
+                }
+            });
+
+            $(document).on('click', '#toggle-follow-company', function () {
+                if ($('#not-signed-in').length > 0) {
+                    toastr.warning("Bạn cần đăng nhập để thực hiện thao tác này", "Lỗi thao tác");
+                    return;
+                }
+                var companyId = $(this).data('company-id');
+                var userId = $(this).data('user-id');
+                var isFollowing = $(this).find('i').length > 0;
+                var url = isFollowing ? '/seeker/api/unfollow-company' : '/seeker/api/follow-company';
+                var successMessage = isFollowing ? "Hủy theo dõi thành công" : "Theo dõi thành công";
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: JSON.stringify({ userId: userId, companyId: companyId }),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        toastr.success(successMessage, "Thành công");
+                        if (!isFollowing) {
+                            $('#toggle-follow-company').html('<i class="fa fa-check me-2"></i>Đang theo dõi');
+                        } else {
+                            $('#toggle-follow-company').html('Theo dõi');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Có lỗi xảy ra, check code đi mậy: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

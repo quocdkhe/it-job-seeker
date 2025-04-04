@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title th:text="${company.name}">Review </title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Font Awesome 6 (dùng icon ngôi sao) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: 'Lexend', sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+      color: #000000;
+      background-color: #f8f9fa;
+    }
+
+    .review-form,
+    .review-guide {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+
+    .form-title {
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    /* Định dạng các icon sao */
+    .star-rating i {
+      font-size: 1.5rem;
+      color: #ccc;
+      /* Màu mặc định cho sao */
+      cursor: pointer;
+      margin-right: 5px;
+      transition: color 0.2s;
+    }
+
+    .star-rating i.hovered {
+      color: #ffc107;
+      /* Màu vàng khi hover hoặc chọn */
+    }
+
+    .review-guide {
+      position: sticky;
+      top: 48px;
+      /* hoặc top: 0; tuỳ ý muốn canh lề trên */
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container py-5">
+    <div class="row g-4">
+      <!-- Cột trái: Form viết đánh giá -->
+      <div class="col-lg-8">
+        <div class="review-form">
+          <h2 class="form-title">Đánh giá <span th:text="${company.name}"></span></h2>
+          <p>
+            Chỉ mất 1 phút để hoàn thành mẫu đánh giá này.
+            Ý kiến của bạn sẽ giúp các ứng viên khác hiểu rõ hơn về công ty.
+          </p>
+
+          <!-- Form -->
+          <form th:action="@{/companies/edit-review/{id}(id=${company.id})}" method="post" th:object="${review}"
+            onsubmit="return validateRating();">
+            <!-- 1. Overall rating -->
+            <div class="d-md-flex justify-content-md-between mb-3">
+              <div class="col-md-4">
+                <label for="overallRating" class="form-label">
+                  Đánh giá tổng quan <span class="text-danger">*</span>
+                </label>
+              </div>
+              <div class="star-rating d-inline-block col-md-8" id="overallRating">
+                <!-- Sửa prefix thành 'fa-solid' để chắc chắn hiển thị trong Font Awesome 6 -->
+                <i class="fas fa-star" data-value="1"></i>
+                <i class="fas fa-star" data-value="2"></i>
+                <i class="fas fa-star" data-value="3"></i>
+                <i class="fas fa-star" data-value="4"></i>
+                <i class="fas fa-star" data-value="5"></i>
+              </div>
+              <input type="hidden" name="overallRating" id="overallRatingInput" th:field="*{overallRating}" />
+            </div>
+
+            <!-- 2. Summary -->
+            <div class="mb-4">
+              <label for="summary" class="form-label">
+                Tóm tắt <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control" id="summary" name="summary"
+                placeholder="Một tiêu đề ngắn cho đánh giá của bạn" th:field="*{header}" required />
+            </div>
+
+            <!-- 3. Overtime policy -->
+            <div class="mb-4">
+              <label class="form-label" style="font-weight: bold; font-size: 18px;">
+                Bạn cảm thấy thế nào về chính sách làm thêm của công ty? <span class="text-danger">*</span>
+              </label>
+
+              <div class="form-check">
+                <input class="form-check-input" type="radio" th:field="*{overtimePolicy}" id="overtimeSatisfied"
+                  value="Satisfied" required />
+                <label class="form-check-label" for="overtimeSatisfied">
+                  Hài lòng
+                </label>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input" type="radio" th:field="*{overtimePolicy}" id="overtimeNeutral"
+                  value="Neutral" />
+                <label class="form-check-label" for="overtimeNeutral">
+                  Bình thường
+                </label>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input" type="radio" th:field="*{overtimePolicy}" id="overtimeUnsatisfied"
+                  value="Unsatisfied" />
+                <label class="form-check-label" for="overtimeUnsatisfied">
+                  Không hài lòng
+                </label>
+              </div>
+            </div>
+
+
+            <!-- 4. Reason for your choice -->
+            <div class="mb-4">
+              <label for="overtimeReason" class="form-label">
+                Hãy nêu lí do
+              </label>
+              <textarea class="form-control" id="overtimeReason" name="overtimeReason" rows="3"
+                th:field="*{overtimeReason}" placeholder="Giải thích tại sao bạn cảm thấy như vậy..."></textarea>
+            </div>
+
+            <!-- 5. What makes you love working here? -->
+            <div class="mb-4">
+              <label for="loveWorking" class="form-label" style="font-weight: bold; font-size: 18px;">
+                Điều gì khiến bạn thích làm việc ở đây? <span class="text-danger">*</span>
+              </label>
+              <textarea class="form-control" id="loveWorking" name="loveWorking" rows="3" th:field="*{workingReason}"
+                placeholder="ví dụ: đồng nghiệp tốt, các dự án thú vị..."></textarea>
+            </div>
+
+            <!-- 6. Suggestion for improvement -->
+            <div class="mb-4">
+              <label for="improvement" class="form-label" style="font-weight: bold; font-size: 18px;">
+                Đề xuất cải thiện <span class="text-danger">*</span>
+              </label>
+              <textarea class="form-control" id="improvement" name="improvement" rows="3" th:field="*{improvement}"
+                placeholder="Những gì cần cải thiện?"></textarea>
+            </div>
+
+            <!-- 7. Rating detail (5 mục) -->
+            <h5 class="mb-3" style="font-weight: bold; font-size: 18px;">Đánh giá chi tiết <span
+                class="text-danger">*</span></h5>
+            <div class="d-flex flex-column">
+              <!-- Salary & Benefits -->
+              <div class="d-md-flex justify-content-md-between mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Thu nhập</label>
+                </div>
+                <div class="star-rating d-inline-block col-12 col-md-8" id="ratingSalary">
+                  <i class="fas fa-star" data-value="1"></i>
+                  <i class="fas fa-star" data-value="2"></i>
+                  <i class="fas fa-star" data-value="3"></i>
+                  <i class="fas fa-star" data-value="4"></i>
+                  <i class="fas fa-star" data-value="5"></i>
+                </div>
+                <input type="hidden" name="ratingSalary" id="ratingSalaryInput" th:field="*{salaryRating}" />
+              </div>
+              <!-- Manager -->
+              <div class="d-md-flex justify-content-md-between mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Cấp trên</label>
+                </div>
+                <div class="star-rating d-inline-block col-12 col-md-8" id="ratingManager">
+                  <i class="fas fa-star" data-value="1"></i>
+                  <i class="fas fa-star" data-value="2"></i>
+                  <i class="fas fa-star" data-value="3"></i>
+                  <i class="fas fa-star" data-value="4"></i>
+                  <i class="fas fa-star" data-value="5"></i>
+                </div>
+                <input type="hidden" name="ratingManager" id="ratingManagerInput" th:field="*{managerRating}" />
+              </div>
+              <!-- Teamwork -->
+              <div class="d-md-flex justify-content-md-between mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Khả năng làm việc nhóm</label>
+                </div>
+                <div class="star-rating d-inline-block col-12 col-md-8" id="ratingTeamwork">
+                  <i class="fas fa-star" data-value="1"></i>
+                  <i class="fas fa-star" data-value="2"></i>
+                  <i class="fas fa-star" data-value="3"></i>
+                  <i class="fas fa-star" data-value="4"></i>
+                  <i class="fas fa-star" data-value="5"></i>
+                </div>
+                <input type="hidden" name="ratingTeamwork" id="ratingTeamworkInput" th:field="*{teamworkRating}" />
+              </div>
+              <!-- Culture -->
+              <div class="d-md-flex justify-content-md-between mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Văn hóa công ty</label>
+                </div>
+                <div class="star-rating d-inline-block col-12 col-md-8" id="ratingCulture">
+                  <i class="fas fa-star" data-value="1"></i>
+                  <i class="fas fa-star" data-value="2"></i>
+                  <i class="fas fa-star" data-value="3"></i>
+                  <i class="fas fa-star" data-value="4"></i>
+                  <i class="fas fa-star" data-value="5"></i>
+                </div>
+                <input type="hidden" name="ratingCulture" id="ratingCultureInput" th:field="*{cultureRating}" />
+              </div>
+              <!-- Office & Work Environment -->
+              <div class="d-md-flex justify-content-md-between mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Môi trường làm việc</label>
+                </div>
+                <div class="star-rating d-inline-block col-12 col-md-8" id="ratingOffice">
+                  <i class="fas fa-star" data-value="1"></i>
+                  <i class="fas fa-star" data-value="2"></i>
+                  <i class="fas fa-star" data-value="3"></i>
+                  <i class="fas fa-star" data-value="4"></i>
+                  <i class="fas fa-star" data-value="5"></i>
+                </div>
+                <input type="hidden" name="ratingOffice" id="ratingOfficeInput" th:field="*{environmentRating}" />
+              </div>
+            </div>
+
+            <!-- 8. Recommend to friends? -->
+            <div class="mb-4">
+              <label class="form-label">
+                Bạn có muốn giới thiệu công ty này cho bạn bè không? <span class="text-danger">*</span>
+              </label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="recommend" th:field="*{isRecommended}"
+                  id="recommendYes" value="true" required />
+                <label class="form-check-label" for="recommendYes">
+                  Có
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="recommend" th:field="*{isRecommended}"
+                  id="recommendNo" value="false" />
+                <label class="form-check-label" for="recommendNo">
+                  Không
+                </label>
+              </div>
+            </div>
+
+            <!-- Nút Submit -->
+            <button type="submit" class="btn" style="background-color: green; color: white;">Lưu đánh giá</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Cột phải: Guidelines & Conditions -->
+      <div class="col-lg-4">
+        <div class="review-guide">
+          <h4 class="mb-3">Nguyên tắc &amp; Điều kiện</h4>
+          <p>Đánh giá của bạn sẽ được công khai trên website, vì thế hãy tuân thủ Nguyên tắc &amp; Điều kiện dưới đây:
+          </p>
+          <ul>
+            <li>Hãy trung thực và mang tính xây dựng.</li>
+            <li>Không cung cấp thông tin cá nhân.</li>
+            <li>Không cung cấp thông tin bí mật kinh doanh của doanh nghiệp</li>
+            <li>Không sử dụng cac ngôn từ và nội dung xúc phạm.</li>
+          </ul>
+          <p class="mt-3">
+            Cảm ơn bạn đã cung cấp phản hồi trung thực nhất!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Script JS cho hiệu ứng ngôi sao -->
+  <script>
+    function initStarRating(starContainerId, hiddenInputId) {
+      const container = document.getElementById(starContainerId);
+      const stars = container.querySelectorAll('i.fa-star');
+      const hiddenInput = document.getElementById(hiddenInputId);
+
+      if (!container || !hiddenInput) return;
+
+      // Lấy giá trị rating từ input ẩn và hiển thị ngay khi trang load
+      const currentValue = hiddenInput.value;
+      if (currentValue) {
+        highlightStars(stars, currentValue);
+      }
+
+      stars.forEach((star) => {
+        // Hover vào sao => highlight các sao đến vị trí đó
+        star.addEventListener('mouseover', () => {
+          const value = star.getAttribute('data-value');
+          highlightStars(stars, value);
+        });
+
+        // Click => cố định giá trị rating
+        star.addEventListener('click', () => {
+          const value = star.getAttribute('data-value');
+          hiddenInput.value = value;
+        });
+
+        // Khi chuột rời khỏi container => giữ highlight theo giá trị hiện tại
+        container.addEventListener('mouseleave', () => {
+          highlightStars(stars, hiddenInput.value);
+        });
+      });
+    }
+
+    // Hàm highlightStars: highlight các sao <= value
+    function highlightStars(stars, value) {
+      stars.forEach((s) => {
+        const starValue = s.getAttribute('data-value');
+        if (Number(starValue) <= Number(value)) {
+          s.classList.add('hovered');
+        } else {
+          s.classList.remove('hovered');
+        }
+      });
+    }
+
+    function validateRating() {
+      const ratingInputs = [
+        'overallRatingInput',
+        'ratingSalaryInput',
+        'ratingManagerInput',
+        'ratingTeamworkInput',
+        'ratingCultureInput',
+        'ratingOfficeInput'
+      ];
+
+      for (const inputId of ratingInputs) {
+        const inputElement = document.getElementById(inputId);
+        if (!inputElement || inputElement.value === "0" || inputElement.value === "") {
+          Swal.fire({
+            icon: 'warning', // icon: success, error, warning, info, question
+            title: 'Thiếu đánh giá!',
+            text: 'Vui lòng chọn đánh giá sao cho tất cả các mục trước khi gửi.',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3085d6'
+          });
+          return false; // Ngăn chặn form submit
+        }
+      }
+
+      return true; // Cho phép form submit nếu hợp lệ
+    }
+
+    // Khởi tạo rating khi trang load
+    document.addEventListener('DOMContentLoaded', () => {
+      initStarRating('overallRating', 'overallRatingInput');
+      initStarRating('ratingSalary', 'ratingSalaryInput');
+      initStarRating('ratingManager', 'ratingManagerInput');
+      initStarRating('ratingTeamwork', 'ratingTeamworkInput');
+      initStarRating('ratingCulture', 'ratingCultureInput');
+      initStarRating('ratingOffice', 'ratingOfficeInput');
+    });
+  </script>
+
+</body>
+
+</html>
