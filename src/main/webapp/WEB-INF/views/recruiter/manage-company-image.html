@@ -83,7 +83,7 @@
                   <td th:text="${image.id}"></td>
                   <td>
 
-                    <img th:src="@{/company-images/{pic}(pic=${image.image})}" alt="Company"
+                    <img th:src="${image.image}" alt="Company"
                       style="width: 100px; height: 100px; object-fit: cover;" />
 
                   </td>
@@ -91,7 +91,7 @@
                   <td th:text="${image.description}"></td>
                   <td>
                     <div class="btn-group" role="group">
-                      <a th:href="@{/company-images/{pic}(pic=${image.image})}" data-lightbox="company-gallery"
+                      <a th:href="${image.image}" data-lightbox="company-gallery"
                         th:attr="data-title=${image.description}">
                         <button class="btn btn-sm btn-success me-2">
                           Xem ảnh
@@ -200,8 +200,7 @@
                   <div class="col-12">
                     <img
                       style="max-height: 150px; max-width: 60%; cursor: pointer; border-radius: 30px; border:  transparent  solid;"
-                      alt="avatar preview" id="editImagePreview"
-                      th:src="@{/company-images/{avatar}(avatar=${session.avatar})}" />
+                      alt="avatar preview" id="editImagePreview" th:src="${session.avatar}" />
                   </div>
                 </div>
 
@@ -275,7 +274,7 @@
 
       // Hiển thị ảnh cũ
       const imagePreview = editModal.querySelector("#editImagePreview");
-      imagePreview.src = `/company-images/${image}`; // Đường dẫn ảnh
+      imagePreview.src = image; // Đường dẫn ảnh
     });
 
     document

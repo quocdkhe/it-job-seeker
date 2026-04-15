@@ -58,7 +58,7 @@
 		<div class="container-xxl py-5 bg-dark page-header mb-5">
 			<div class="container my-5 pt-5 pb-4">
 				<h1 class="display-3 text-white mb-3 animated slideInDown" th:text="${company.name}"></h1>
-			<nav aria-label="breadcrumb">
+				<nav aria-label="breadcrumb">
 					<ol class="breadcrumb text-uppercase">
 						<li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
 						<li class="breadcrumb-item"><a href="/companies">Công ty IT</a></li>
@@ -78,7 +78,7 @@
 					<div class="col-lg-8">
 						<div class="d-flex align-items-center mb-5">
 							<div class="image-container">
-								<img th:src="@{/company-logo/{logo}(logo=${company.logo})}" alt="Company logo" />
+								<img th:src="${company.logo}" alt="Company logo" />
 							</div>
 							<div class="text-start ps-4">
 								<h3 class="mb-3" th:text="${company.name}"></h3>
@@ -152,9 +152,8 @@
 						<div class="mb-3">
 							<!-- Gallery -->
 							<div class="d-flex flex-wrap gap-2 gallery mb-3">
-								<a th:each="image : ${company.companyImages}" data-fancybox="gallery"
-									th:href="@{/company-images/{image}(image=${image.image})}">
-									<img th:src="@{/company-images/{image}(image=${image.image})}" alt="Company">
+								<a th:each="image : ${company.companyImages}" data-fancybox="gallery" th:href="${image.image}">
+									<img th:src="${image.image}" alt="Company">
 								</a>
 							</div>
 							<h4>Kĩ năng chủ đạo</h4>
@@ -210,8 +209,7 @@
 										<!-- Company Info with logo -->
 										<div class="d-flex align-items-center mb-3">
 											<div class="image-container-small text-center">
-												<img th:src="@{/company-logo/{logo}(logo=${company.logo})}" alt="Company Logo"
-													class="img-fluid rounded-circle">
+												<img th:src="${company.logo}" alt="Company Logo" class="img-fluid rounded-circle">
 											</div>
 											<span class="mb-0 ms-2"><strong th:text="${company.name}"></strong></span>
 										</div>

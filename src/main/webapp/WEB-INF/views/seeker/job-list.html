@@ -140,8 +140,7 @@
                   <!-- Company Info with logo -->
                   <div class="d-flex align-items-center mb-3">
                     <div class="image-container-small text-center">
-                      <img th:src="@{/company-logo/{logo}(logo=${job.company.logo})}" alt="Company Logo"
-                        class="img-fluid rounded-circle">
+                      <img th:src="${job.company.logo}" alt="Company Logo" class="img-fluid rounded-circle">
                     </div>
                     <span class="mb-0 ms-2"><strong th:text="${job.company.name}"></strong></span>
                   </div>
@@ -190,8 +189,7 @@
               <div class="mb-3">
                 <div id="section-1" class="d-flex mb-3">
                   <div class="image-container">
-                    <img th:src="@{/company-logo/{logo}(logo=${job.company.logo})}" alt="Company Logo"
-                      class="img-fluid rounded-circle">
+                    <img th:src="${job.company.logo}" alt="Company Logo" class="img-fluid rounded-circle">
                   </div>
                   <div class="text-start ps-4">
                     <h4 th:text="${job.title}"></h4>

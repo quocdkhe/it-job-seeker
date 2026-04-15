@@ -81,8 +81,7 @@
                                     <div class="row g-4">
                                         <div class="col-sm-12 col-md-8 d-flex align-items-center">
                                             <div class="image-container col-4">
-                                                <img th:src="@{/company-logo/{logo}(logo=${resume.company.logo})}"
-                                                    alt="Company logo" />
+                                                <img th:src="${resume.company.logo}" alt="Company logo" />
                                             </div>
                                             <div class=" col-9 text-start ps-4">
 

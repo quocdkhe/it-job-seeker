@@ -75,9 +75,8 @@
                                     <div class="card-body p-4">
                                         <div class="d-flex justify-content-center mb-3">
                                             <div class="image-container text-center">
-                                                <img th:src="@{/company-logo/{logo}(logo=${company.logo})}"
-                                                    alt="Company Logo" class="img-fluid rounded-circle"
-                                                    style="max-width: 120px;" />
+                                                <img th:src="${company.logo}" alt="Company Logo"
+                                                    class="img-fluid rounded-circle" style="max-width: 120px;" />
                                             </div>
                                         </div>
 

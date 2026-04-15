@@ -10,15 +10,4 @@ public class ItJobSeekerApplication {
 		SpringApplication.run(ItJobSeekerApplication.class, args);
 	}
 
-	/*
-	 * @Bean
-	 * CommandLineRunner run(LocationService locationService) {
-	 * return args -> {
-	 * System.out.
-	 * println("🚀 Fetching and saving provinces, districts, and wards...");
-	 * locationService.fetchAndSaveProvinces();
-	 * System.out.println("✅ Data fetching completed!");
-	 * };
-	 * }
-	 */
 }

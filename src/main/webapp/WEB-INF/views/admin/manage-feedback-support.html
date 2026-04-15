@@ -90,13 +90,11 @@
                   <td>
                     <a th:if="${feedback.image1}" th:href="@{/support/{feedback1}(feedback1=${feedback.image1})}"
                       data-lightbox="feedback-gallery" th:attr="data-title=${feedback.description}">
-                      <img th:src="@{/support/{feedback1}(feedback1=${feedback.image1})}" alt="1" class="img-thumbnail"
-                        width="100">
+                      <img th:src="${feedback.image1}" alt="1" class="img-thumbnail" width="100">
                     </a>
                     <a th:if="${feedback.image2}" th:href="@{/support/{feedback2}(feedback2=${feedback.image2})}"
                       data-lightbox="feedback-gallery" th:attr="data-title=${feedback.description}">
-                      <img th:src="@{/support/{feedback2}(feedback2=${feedback.image2})}" alt="2" class="img-thumbnail"
-                        width="100">
+                      <img th:src="${feedback.image2}" alt="2" class="img-thumbnail" width="100">
                     </a>
                   </td>
                   <td th:text="${feedback.user.username}"></td>
