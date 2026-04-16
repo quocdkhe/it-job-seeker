@@ -77,8 +77,7 @@
               <p><strong>Mô tả:</strong> <span th:text="${resume.description}"></span></p>
             </div>
             <div class="card-footer">
-              <a target="_blank" th:href="@{'/cv/' + ${resume.user.username} + '/' + ${resume.resume}}"
-                class="btn btn-primary">Xem CV</a>
+              <a target="_blank" th:href="${resume.resume}" class="btn btn-primary">Xem CV</a>
             </div>
           </div>
           <form th:action="@{'/recruiter/resume/contact/' + ${resume.id}}" method="post" th:object="${emailContentDTO}">

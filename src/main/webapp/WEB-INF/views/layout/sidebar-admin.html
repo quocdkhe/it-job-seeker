@@ -6,8 +6,8 @@
         <div class="d-flex align-items-center ms-4 mb-4">
             <div class="position-relative">
                 <img th:if="${session.provider == 'LOCAL'}" class="rounded-circle me-lg-2"
-                    th:src="${session.provider == 'LOCAL' && session.avatar != null ? '/avatar/' + session.avatar : (session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg')}"
-                    alt="" style="width: 40px; height: 40px;">
+                    th:src="${session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg'}" alt=""
+                    style="width: 40px; height: 40px;">
                 <img th:if="${session.provider != 'LOCAL'}" class="rounded-circle me-lg-2"
                     th:src="${session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg'}" alt=""
                     style="width: 40px; height: 40px;">

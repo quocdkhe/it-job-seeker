@@ -114,7 +114,7 @@
                                     <img th:if="${session.provider == 'LOCAL'}"
                                         style="max-height: 250px; max-width: 100%; cursor: pointer; border-radius: 30px; border:  transparent  solid;"
                                         alt="avatar preview" id="avatarPreview"
-                                        th:src="${session.avatar != null ? '/avatar/' + session.avatar : '/avatar/avatar-trang-4.jpg'}"
+                                        th:src="${session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg'}"
                                         onclick="document.getElementById('avatarFile').click();" />
 
                                     <p th:if="${session.avatar == null}"

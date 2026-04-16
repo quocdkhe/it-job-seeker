@@ -83,8 +83,7 @@
                   <td th:text="${resume.preferredLevel}"></td>
                   <td th:text="${resume.status}"></td>
                   <td>
-                    <a target="_blank" th:href="@{'/cv/' + ${resume.user.username} + '/' + ${resume.resume}}"
-                      class="btn btn-sm btn-primary">Xem CV</a>
+                    <a target="_blank" th:href="${resume.resume}" class="btn btn-sm btn-primary">Xem CV</a>
                     <a th:href="@{'/recruiter/resume/contact/' + ${resume.id}}" class="btn btn-sm btn-info">Liên lạc</a>
                   </td>
                 </tr>

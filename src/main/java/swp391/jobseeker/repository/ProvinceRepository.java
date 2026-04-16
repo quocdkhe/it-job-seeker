@@ -25,4 +25,8 @@ public interface ProvinceRepository extends JpaRepository<Province, Long> {
             "INNER JOIN jobs j ON j.id = jb.job_id " +
             "WHERE j.id = :jobId", nativeQuery = true)
     List<Province> findProvinceByJobId(@Param("jobId") Long jobId);
+
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM provinces)", nativeQuery = true)
+    boolean existsAny();
+
 }
