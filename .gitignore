@@ -16,6 +16,3 @@ target/
 
 # Ignore the .classpath file
 .dockerignore
-Dockerfile
-docker/
-docker-compose.yml
