@@ -82,8 +82,7 @@
                                     <!-- Hiển thị ảnh hiện tại (click để chọn file) -->
                                     <div class="col-12">
                                         <img style="max-height: 250px; max-width: 100%; cursor: pointer; border-radius: 30px; border: transparent solid;"
-                                            alt="Click để chọn ảnh đại diện" id="imagePreview"
-                                            th:src="@{/company-logo/{companyLogo}(companyLogo=${company.logo})}"
+                                            alt="Click để chọn ảnh đại diện" id="imagePreview" th:src="${company.logo}"
                                             onclick="document.getElementById('imageFile').click();" />
                                     </div>
                                 </div>

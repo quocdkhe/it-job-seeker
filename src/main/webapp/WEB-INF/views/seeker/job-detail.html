@@ -112,9 +112,8 @@
 
 							<!-- Gallery -->
 							<div class="d-flex flex-wrap gap-2 mt-3 mb-3 gallery">
-								<a th:each="image : ${job.company.companyImages}" data-fancybox="gallery"
-									th:href="@{/company-images/{image}(image=${image.image})}">
-									<img th:src="@{/company-images/{image}(image=${image.image})}" alt="Company">
+								<a th:each="image : ${job.company.companyImages}" data-fancybox="gallery" th:href="${image.image}">
+									<img th:src="${image.image}" alt="Company">
 								</a>
 							</div>
 
@@ -151,7 +150,7 @@
 								<div class="row">
 									<div class="col-md-4">
 										<div class="image-container text-center">
-											<img th:src="@{/company-logo/{logo}(logo=${job.company.logo})}" alt="" />
+											<img th:src="${job.company.logo}" alt="" />
 										</div>
 									</div>
 									<div class="col-md-8">

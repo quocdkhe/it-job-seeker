@@ -93,8 +93,7 @@
                                     <div class="row g-4">
                                         <div class="col-sm-12 col-md-8 d-flex align-items-center">
                                             <div class="image-container">
-                                                <img th:src="@{/company-logo/{pic}(pic=${followJob.company.logo})}"
-                                                    alt="">
+                                                <img th:src="${followJob.company.logo}" alt="">
                                             </div>
 
                                             <div class="text-start ps-4">

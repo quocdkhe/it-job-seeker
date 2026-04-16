@@ -1,91 +1,105 @@
 package swp391.jobseeker.service;
 
-import jakarta.servlet.ServletContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import swp391.jobseeker.domain.S3Properties;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Service
 public class FileService {
 
-    private final ServletContext servletContext;
+    private final S3Client s3Client;
+    private final S3Properties s3Properties;
 
-    public FileService(ServletContext servletContext) {
-        this.servletContext = servletContext;
+    public FileService(S3Client s3Client, S3Properties s3Properties) {
+        this.s3Client = s3Client;
+        this.s3Properties = s3Properties;
     }
 
     /**
-     * Hàm này sử dụng để lưu file upload lên server
-     * 
-     * @param file         file upload
-     * @param targetFolder thư mục lưu file
-     * @return tên file đã lưu (để lưu vào trong database)
-     */
-
-    /**
-     * Hàm này sử dụng để lưu file upload lên server
-     * 
-     * @param file         tên file upload, truyền từ thẻ input
-     * @param targetFolder đối với ảnh thì ghi loại ảnh, đối với cv, lấy username
-     *                     người đó
-     * @param type         file type: image để lưu vào thư mục images, cv để lưu vào
-     *                     thư mục cv
-     * @return true or false
+     * Upload a file to S3-compatible storage.
+     *
+     * @param file         the uploaded file from input
+     * @param targetFolder subfolder name (e.g. username, image type)
+     * @param type         "image" or "cv"
+     * @return full public URL of the uploaded file, or "" / null on failure
      */
     public String handleSaveUploadFile(MultipartFile file, String targetFolder, String type) {
         if (file.isEmpty()) {
             return "";
         }
-        // Get absolute path
-        String rootPath = "";
+
+        String folder;
         if (type.equals("image")) {
-            rootPath = this.servletContext.getRealPath("/resources/images");
+            folder = "images/" + targetFolder;
         } else if (type.equals("cv")) {
-            rootPath = this.servletContext.getRealPath("/resources/cv");
+            folder = "cv/" + targetFolder;
         } else {
             return null;
         }
-        String finalName = "";
+
+        String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+        String s3Key = folder + "/" + fileName; // e.g. images/avatar/1234567890-photo.jpg
+
         try {
-            byte[] bytes = file.getBytes();
-            File dir = new File(rootPath + File.separator + targetFolder);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            // Create the file on server
-            finalName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-            File serverFile = new File(dir.getAbsolutePath() + File.separator + finalName);
-            try (BufferedOutputStream stream = new BufferedOutputStream(
-                    new FileOutputStream(serverFile))) {
-                stream.write(bytes);
-            }
+            PutObjectRequest putRequest = PutObjectRequest.builder()
+                    .bucket(s3Properties.getBucketName())
+                    .key(s3Key)
+                    .contentType(file.getContentType())
+                    .build();
+
+            s3Client.putObject(putRequest, RequestBody.fromBytes(file.getBytes()));
+
+            // Return the public URL
+            return s3Properties.getPublicUrl() + "/" + s3Properties.getBucketName() + "/" + s3Key;
+
         } catch (IOException e) {
             e.printStackTrace();
+            return "";
         }
-        return finalName;
-    }
-
-    public boolean handleDeleteImage(String fileName, String targetFolder) {
-        String rootPath = this.servletContext.getRealPath("/resources/images");
-        File dir = new File(rootPath + File.separator + targetFolder + File.separator + fileName);
-        return dir.delete();
     }
 
     /**
-     * Tương tự với hàm này, targetFolder truyền vào username của người đó
-     * 
-     * @param fileName
-     * @param targetFolder
-     * @return
+     * Delete an image from S3.
+     *
+     * @param fileName     file name stored in DB
+     * @param targetFolder subfolder (e.g. image type)
+     * @return true if deleted successfully
      */
-    public boolean handleDeleteCV(String fileName, String targetFolder) {
-        String rootPath = this.servletContext.getRealPath("/resources/cv");
-        File dir = new File(rootPath + File.separator + targetFolder + File.separator + fileName);
-        return dir.delete();
+    public boolean handleDeleteImage(String fileName, String targetFolder) {
+        String s3Key = "images/" + targetFolder + "/" + fileName;
+        return deleteFromS3(s3Key);
     }
 
+    /**
+     * Delete a CV from S3.
+     *
+     * @param fileName     file name stored in DB
+     * @param targetFolder subfolder (username)
+     * @return true if deleted successfully
+     */
+    public boolean handleDeleteCV(String fileName, String targetFolder) {
+        String s3Key = "cv/" + targetFolder + "/" + fileName;
+        return deleteFromS3(s3Key);
+    }
+
+    private boolean deleteFromS3(String s3Key) {
+        try {
+            DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                    .bucket(s3Properties.getBucketName())
+                    .key(s3Key)
+                    .build();
+
+            s3Client.deleteObject(deleteRequest);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -44,6 +44,12 @@ public class LocationService {
     }
 
     public void fetchAndSaveProvinces() {
+
+        if(provinceRepository.existsAny()){
+            System.out.println("No need to fetch data");
+            return;
+        }
+
         String apiUrl = "https://provinces.open-api.vn/api/?depth=3";
         List<Map<String, Object>> response = restTemplate.getForObject(apiUrl, List.class);
 
@@ -96,5 +102,6 @@ public class LocationService {
             }
         }
         System.out.println("✅ Dữ liệu tỉnh/huyện/xã đã được cập nhật thành công!");
+        System.out.println("✅ Data fetching completed!");
     }
 }

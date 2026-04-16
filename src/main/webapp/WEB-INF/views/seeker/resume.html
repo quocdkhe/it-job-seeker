@@ -79,7 +79,7 @@
                             style="height: 400px;">
                             <div class="col-4 d-flex justify-content-center align-items-center me-4">
                                 <img th:if="${session.provider == 'LOCAL'}" class="rounded-circle me-lg-2"
-                                    th:src="${session.avatar != null ? '/avatar/' + session.avatar : (session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg')}"
+                                    th:src="${session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg'}"
                                     alt="" style="max-height: 250px; max-width: 100%;">
                                 <img th:if="${session.provider != 'LOCAL'}" class="rounded-circle me-lg-2"
                                     th:src="${session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg'}"

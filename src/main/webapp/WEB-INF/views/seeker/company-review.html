@@ -80,7 +80,7 @@
                     <div class="col-lg-8">
                         <div class="d-flex align-items-center mb-5">
                             <div class="image-container">
-                                <img th:src="@{/company-logo/{logo}(logo=${company.logo})}" alt="Company logo" />
+                                <img th:src="${company.logo}" alt="Company logo" />
                             </div>
                             <div class="text-start ps-4">
                                 <h3 class="mb-3" th:text="${company.name}"></h3>
@@ -239,7 +239,8 @@
                         <div class="mb-3 text-center" th:if="${reviews.size() > 0}">
                             <h3 class="pb-2">Tất Cả Đánh Giá</h3>
                         </div>
-                        <div class="mb-5 card card-review" th:style="${reviews.size() == 0} ? 'display: none;' : 'display: block;'">
+                        <div class="mb-5 card card-review"
+                            th:style="${reviews.size() == 0} ? 'display: none;' : 'display: block;'">
                             <div th:each="review : ${reviews}">
                                 <div class="review-item">
                                     <div class="d-flex align-items-center justify-content-between">
@@ -427,8 +428,8 @@
                                         <!-- Company Info with logo -->
                                         <div class="d-flex align-items-center mb-3">
                                             <div class="image-container-small text-center">
-                                                <img th:src="@{/company-logo/{logo}(logo=${company.logo})}"
-                                                    alt="Company Logo" class="img-fluid rounded-circle">
+                                                <img th:src="${company.logo}" alt="Company Logo"
+                                                    class="img-fluid rounded-circle">
                                             </div>
                                             <span class="mb-0 ms-2"><strong th:text="${company.name}"></strong></span>
                                         </div>

@@ -63,8 +63,8 @@
                     <h6 class="mb-4">Chi tiết thông tin người dùng</h6>
                     <div class="row">
                         <div class="col-md-3 d-flex justify-content-center align-items-center">
-                            <img th:if="${user.provider == 'LOCAL'}" th:src="'/avatar/' + @{${user.avatar}}"
-                                alt="User Avatar" class="image-fluid" style="width: 100%;">
+                            <img th:if="${user.provider == 'LOCAL'}" th:src="${user.avatar}" alt="User Avatar"
+                                class="image-fluid" style="width: 100%;">
                             <img th:if="${user.provider != 'LOCAL'}" th:src="${user.avatar}" alt="User Avatar"
                                 class="image-fluid" style="width: 100%;">
                         </div>

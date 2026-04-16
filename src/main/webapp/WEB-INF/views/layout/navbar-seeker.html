@@ -35,8 +35,8 @@
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
 
                         <img th:if="${session.provider == 'LOCAL'}" class="rounded-circle me-lg-2"
-                            th:src="${session.avatar != null ? '/avatar/' + session.avatar : '/avatar/avatar-trang-4.jpg'}"
-                            alt="" style="width: 40px; height: 40px;">
+                            th:src="${session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg'}" alt=""
+                            style="width: 40px; height: 40px;">
 
                         <img th:if="${session.provider != 'LOCAL'}" class="rounded-circle me-lg-2"
                             th:src="${session.avatar != null ? session.avatar : '/avatar/avatar-trang-4.jpg'}" alt=""

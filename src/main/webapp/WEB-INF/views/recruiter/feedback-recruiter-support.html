@@ -112,7 +112,7 @@
                                                 accept=".png, .jpg, .jpeg, .webp" style="display: none;" />
                                             <img class="img-fluid rounded" style="max-width: auto; cursor: pointer;"
                                                 alt="Click để chọn ảnh minh họa 1" id="imagePreview1"
-                                                th:src="@{/illustration1/{image1}(image1=${illustration1})}"
+                                                th:src="${illustration1}"
                                                 onclick="document.getElementById('imageFile1').click();" />
                                         </div>
                                     </div>
@@ -125,7 +125,7 @@
                                                 accept=".png, .jpg, .jpeg, .webp" style="display: none;" />
                                             <img class="img-fluid rounded" style="max-width: auto; cursor: pointer;"
                                                 alt="Click để chọn ảnh minh họa 2" id="imagePreview2"
-                                                th:src="@{/illustration2/{image2}(image2=${illustration2})}"
+                                                th:src="${illustration2}"
                                                 onclick="document.getElementById('imageFile2').click();" />
                                         </div>
                                     </div>
