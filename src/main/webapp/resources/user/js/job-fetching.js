@@ -56,20 +56,17 @@ function renderJobContent(job, liked, applied) {
 
   section1.innerHTML = `
     <div class="image-container">
-      <img src="/company-logo/${
-        job.company.logo
-      }" alt="Company Logo" class="img-fluid rounded-circle">
+      <img src="${job.company.logo}" alt="Company Logo" class="img-fluid rounded-circle">
     </div>
     <div class="text-start ps-4">
       <h4>${job.title}</h4>
       <p class="text-truncate me-3 mb-3">${job.company.name}</p>
       <p class="text-truncate me-3" style="font-size: 1.25rem; font-weight: bold;">
         <i class="far fa-money-bill-alt text-primary me-2"></i>
-        ${
-          notSignedIn
-            ? '<a href="/login">Đăng nhập để xem mức lương</a>'
-            : `<span>${job.salary}</span>`
-        }
+        ${notSignedIn
+      ? '<a href="/login">Đăng nhập để xem mức lương</a>'
+      : `<span>${job.salary}</span>`
+    }
       </p>
     </div>
     <div class="text-start ps-4">
@@ -83,16 +80,14 @@ function renderJobContent(job, liked, applied) {
   if (section2) {
     if (!applied) {
       section2.innerHTML = `
-      <a href="/jobs/${
-        job.id
-      }/apply" class="btn btn-primary flex-grow-1 me-2">Ứng tuyển</a>
+      <a href="/jobs/${job.id
+        }/apply" class="btn btn-primary flex-grow-1 me-2">Ứng tuyển</a>
       <a class="btn btn-light" id="handle-add-delete-favorite-job" 
         data-job-id=${job.id} >
-      ${
-        liked
+      ${liked
           ? `<i class="fa fa-heart text-primary"></i>`
           : `<i class="far fa-heart text-primary"></i>`
-      }
+        }
       </a>
     `;
     } else {
@@ -134,12 +129,12 @@ function renderJobContent(job, liked, applied) {
         Kỹ năng:
         <!-- Tăng gap -->
       ${job.skills
-        .map(
-          (skill) => `
+      .map(
+        (skill) => `
           <span data-skill-id=${skill.id} class="skill-tag badge bg-light text-dark rounded-pill px-3 py-2">${skill.name}</span>
         `
-        )
-        .join("")}
+      )
+      .join("")}
       </div>
   `;
   const section4 = document.querySelector("#section-4");
