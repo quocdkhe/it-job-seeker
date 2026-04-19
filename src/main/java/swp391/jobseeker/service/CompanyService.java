@@ -26,7 +26,7 @@ public class CompanyService {
     }
 
     public List<Company> findTopCompaniesHomepage() {
-        Pageable pageable = PageRequest.of(1, 5);
+        Pageable pageable = PageRequest.of(0, 5);
         Page<Company> page = companyRepository.findAll(pageable);
         return page.getContent();
     }

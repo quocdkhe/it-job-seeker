@@ -117,14 +117,13 @@
                         </div>
                     </div>
 
-                    <!-- Quản lý hồ sơ -->
                     <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                         <h1 class="mb-4">Quản lý hồ sơ</h1>
                         <p class="mb-4">Hồ sơ cá nhân của bạn - dùng để apply công việc và người tuyển dụng có thể xem
                             của bạn.</p>
                         <p th:if="${cv != null and not #strings.isEmpty(cv)}">
                             <span class="fw-bold">CV hiện tại:</span>
-                            <span th:text="${#strings.substringAfter(cv, '-').replace('.pdf', '')}"></span>
+                            <span th:text="${cv}"></span>
                         </p>
 
 
@@ -152,9 +151,7 @@
                             </button>
                             <div th:if="${cv != null and not #strings.isEmpty(cv)}" class="btn btn-success py-3 mt-3">
                                 <i class="fa fa-eye text-white me-1"></i>
-                                <a class="text-white"
-                                    th:href="@{/cv/{name}/{cvFile}(name=${user.username},cvFile=${cv})}"
-                                    target="_blank">Xem
+                                <a class="text-white" th:href="${cv}" target="_blank">Xem
                                     CV hiện tại</a>
                             </div>
                         </form>

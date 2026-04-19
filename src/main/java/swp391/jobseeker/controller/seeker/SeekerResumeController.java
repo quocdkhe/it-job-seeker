@@ -16,11 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import swp391.jobseeker.controller.admin.AccountController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import swp391.jobseeker.domain.Company;
 import swp391.jobseeker.domain.Job;
 import swp391.jobseeker.domain.Level;
 import swp391.jobseeker.domain.Province;
@@ -35,7 +33,6 @@ import swp391.jobseeker.service.UserService;
 @Controller
 public class SeekerResumeController {
 
-    private final AccountController accountController;
     private final UserService userService;
     private final JobService jobService;
     private final ResumeService resumeService;
@@ -43,13 +40,12 @@ public class SeekerResumeController {
     private final EmailSenderService emailSenderService;
 
     public SeekerResumeController(UserService userService, JobService jobService, ResumeService resumeService,
-            FileService fileService, EmailSenderService emailSenderService, AccountController accountController) {
+            FileService fileService, EmailSenderService emailSenderService) {
         this.userService = userService;
         this.jobService = jobService;
         this.resumeService = resumeService;
         this.fileService = fileService;
         this.emailSenderService = emailSenderService;
-        this.accountController = accountController;
     }
 
     @GetMapping("/jobs/{id}/apply")
@@ -116,11 +112,6 @@ public class SeekerResumeController {
                 resume.getCompany().getName(),
                 resume.getPreferredLocation(), resume.getPreferredLevel());
         return "seeker/send-cv-completed";
-    }
-
-    @GetMapping("/testing-send-cv")
-    public String getMethodName() {
-        return "/seeker/send-cv-completed";
     }
 
     @GetMapping("/cv-status")
